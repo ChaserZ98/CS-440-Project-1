@@ -7,7 +7,7 @@ import shutil
 import multiprocessing
 import glob
 import IPython
-# test commit
+
 
 def backTrackerMaze(number, width=10, height=10):
     shape = (height, width)

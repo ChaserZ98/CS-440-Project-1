@@ -8,7 +8,7 @@ import multiprocessing
 import glob
 import IPython
 
-
+    # blablabla
 def backTrackerMaze(number, width=10, height=10):
     shape = (height, width)
     # Build actual maze

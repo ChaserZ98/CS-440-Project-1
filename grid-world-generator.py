@@ -8,18 +8,18 @@ import multiprocessing
 import glob
 import IPython
 
-    # blablabla
+
 def backTrackerMaze(number, width=10, height=10):
     shape = (height, width)
     # Build actual maze
     Z = np.ones(shape, dtype=bool)  # Maze-grid: 1's are black, 0's are white
 
-    # Inititally set all cells as unvisited.
-    Y = np.zeros(shape, dtype=bool)  # Visted or not
+    # Initially set all cells as unvisited.
+    Y = np.zeros(shape, dtype=bool)  # Visited or not
 
-    # stack of visted cells
+    # stack of visited cells
     stack = []
-    ## Recursive backtracker
+    # Recursive backTracker
     # 1 Make the initial cell the current cell and mark it as visited.
     # Random Initial cell
     A, B = rr.choice(range(0, (shape[0]), 2)), rr.choice(range(0, (shape[1]), 2))
@@ -112,13 +112,13 @@ if __name__ == "__main__":
         os.mkdir("pics" + i)
         os.mkdir("arrs" + i)
 
-    ### specify the number of grids you want to generate
+    # specify the number of grids you want to generate
     # n_grids = int(sys.argv[1])
     n_grids = int(1)
 
     multiprocessing.freeze_support()
     num_proc = multiprocessing.cpu_count()
-    ## for python 3.6 uncomment the line below, and comment the line above
+    # for python 3.6 uncomment the line below, and comment the line above
     # num_proc = os.cpu_count()
     pool = multiprocessing.Pool(processes=num_proc)
 

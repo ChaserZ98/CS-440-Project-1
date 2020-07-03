@@ -9,6 +9,7 @@ import glob
 import IPython
 
 
+# use backTrackerMaze as the maze generator
 def backTrackerMaze(number, width=10, height=10):
     shape = (height, width)
     # Build actual maze

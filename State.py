@@ -9,6 +9,7 @@ class State:
         self.gValue = 0
         self.hValue = 0
         self.fValue = self.gValue + self.hValue
+        self.treePointer = None
 
     def updateFValue(self):
         self.fValue = self.gValue + self.hValue

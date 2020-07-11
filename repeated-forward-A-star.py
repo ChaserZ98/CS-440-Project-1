@@ -186,4 +186,5 @@ if __name__ == "__main__":
             print("I cannot reach the target.")
             exit()
 
+
         exit()  # temporary exit

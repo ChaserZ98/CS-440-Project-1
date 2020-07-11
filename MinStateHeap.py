@@ -92,15 +92,24 @@ class MinStateHeap(object):
             self.data[count - 1], self.data[j - 1] = self.data[j - 1], self.data[count - 1]
             count = j
 
-    def display(self):
-        print("[", end="")
+    def toString(self):
+        result = "["
         for i in range(len(self.data)):
-            print("%d: %s" % (priorityWithSmallerG(self.data[i]), self.data[i].location), end="")
+            result += ("%d: %s" % (priorityWithSmallerG(self.data[i]), self.data[i].location))
             if i != len(self.data) - 1:
-                print(", ", end="")
-        print("]")
+                result += ", "
+        result += "]"
+        return result
+
+    def contains(self, s: State):
+        if s in self.data:
+            return True
+        else:
+            return False
 
 
+
+# test code below
 # if __name__ == "__main__":
 #     states = []
 #     for i in range(10):
@@ -112,7 +121,7 @@ class MinStateHeap(object):
 #         state.gValue = random.randint(0, 10)
 #         state.updateFValue()
 #         stateHeap.push(state)
-#     stateHeap.display()
+#     print(stateHeap.toString())
 #     min = stateHeap.pop()
 #     print(min.location, min.hValue, min.gValue, priorityWithSmallerG(min))
-#     stateHeap.display()
+#     print(stateHeap.toString())

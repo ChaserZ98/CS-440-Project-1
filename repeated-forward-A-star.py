@@ -27,40 +27,36 @@ def heuristic(s1: State, s2: State):
 # 1: right; 2: left; 3: up; 4: down
 def generateActionList(state: State):
     possibleActions = []
-    print("State location: %s" % state.location)
+    # print("State location: %s" % state.location)
     x = state.location[0]
     y = state.location[1]
 
     #   Check possible actions
     #   Check right
     if x + 1 <= len(states) - 1:
-        if states[x + 1][y].isBlocked == 0:
+        if states[x + 1][y].discoveredBlockStatus == 0:
             possibleActions.append(1)
-        else:
-            print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (
-                x + 1, y, x + 1, y, states[x + 1][y].isBlocked))
+        # else:
+        # print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (x + 1, y, x + 1, y, states[x + 1][y].isBlocked))
     #   Check left
     if x - 1 >= 0:
-        if states[x - 1][y].isBlocked == 0:
+        if states[x - 1][y].discoveredBlockStatus == 0:
             possibleActions.append(2)
-        else:
-            print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (
-                x - 1, y, x - 1, y, states[x - 1][y].isBlocked))
+        # else:
+        # print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (x - 1, y, x - 1, y, states[x - 1][y].isBlocked))
     #   Check up
     if y + 1 <= len(states) - 1:
-        if states[x][y + 1].isBlocked == 0:
+        if states[x][y + 1].discoveredBlockStatus == 0:
             possibleActions.append(3)
-        else:
-            print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (
-                x, y + 1, x, y + 1, states[x][y + 1].isBlocked))
+        # else:
+        # print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (x, y + 1, x, y + 1, states[x][y + 1].isBlocked))
     #   Check down
     if y - 1 >= 0:
-        if states[x][y - 1].isBlocked == 0:
+        if states[x][y - 1].discoveredBlockStatus == 0:
             possibleActions.append(4)
-        else:
-            print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (
-                x, y - 1, x, y - 1, states[x][y - 1].isBlocked))
-    print("\tPossible action: %s" % possibleActions)
+        # else:
+        # print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (x, y - 1, x, y - 1, states[x][y - 1].isBlocked))
+    # print("\tPossible action: %s" % possibleActions)
 
     return possibleActions
 
@@ -85,9 +81,27 @@ def stateAfterMoving(state, action):
         return None
 
 
+def checkNearbyBlock(s: State):
+    x = s.location[0]
+    y = s.location[1]
+    if x + 1 <= len(states) - 1:
+        states[x + 1][y].discoveredBlockStatus = states[x + 1][y].actualBlockStatus
+    #   Check left
+    if x - 1 >= 0:
+        states[x - 1][y].discoveredBlockStatus = states[x - 1][y].actualBlockStatus
+    #   Check up
+    if y + 1 <= len(states) - 1:
+        states[x][y + 1].discoveredBlockStatus = states[x][y + 1].actualBlockStatus
+    #   Check down
+    if y - 1 >= 0:
+        states[x][y - 1].discoveredBlockStatus = states[x][y - 1].actualBlockStatus
+
+
 # A* algorithm
 def ComputePath():
+    i = 0
     while goalState.gValue > openHeap.peek().fValue:
+        i += 1
         # print(openHeap.toString())
         minState = openHeap.pop()  # Remove a state s with the smallest f-value g(s) + h(s) from openHeap
         # print(openHeap.toString())
@@ -108,9 +122,8 @@ def ComputePath():
                 # print("openHeap: %s" % openHeap.toString())  # print openHeap
 
                 if openHeap.contains(searchedState):
-                    print("openHeap contains %d: %s" % (searchedState.fValue, searchedState.location))
-                    # To do
-                    # remove it from OPEN
+                    # print("openHeap contains %d: %s" % (searchedState.fValue, searchedState.location))
+                    openHeap.remove(searchedState)  # Remove existed state from opehHeap
 
                 # insert succ(s, a) into OPEN with f-value g(succ(s, a)) + h(succ(s, a))
                 searchedState.hValue = heuristic(searchedState, goalState)
@@ -125,20 +138,17 @@ def ComputePath():
             # print(states[x][y].gValue)
             # print(searchedState.gValue)
 
-        exit()  # TO DO
-
-    return 0
-
 
 # main function
 if __name__ == "__main__":
     counter = 0  # A star counter
+    agentPath = ""  # Path recorder
     print("Initializing states...", end="")
     states = generateStates()  # initialize states
     print("done!")
 
-    print("Randomly setting start location and goal location...", end="")
     # initialize start state and goal state randomly
+    print("Randomly setting start location and goal location...", end="")
     statesEdgeSize = len(states) - 1
     # print(statesEdgeSize)
     startLocation = np.random.randint(0, statesEdgeSize, 2)
@@ -147,8 +157,8 @@ if __name__ == "__main__":
     # print(states[start[0]][start[1]].isBlocked)
     # print(states[goal[0]][goal[1]].isBlocked)
 
-    while (states[startLocation[0]][startLocation[1]].isBlocked == 1) | (
-            states[goalLocation[0]][goalLocation[1]].isBlocked == 1) | all(startLocation == goalLocation):
+    while (states[startLocation[0]][startLocation[1]].actualBlockStatus == 1) | (
+            states[goalLocation[0]][goalLocation[1]].actualBlockStatus == 1) | all(startLocation == goalLocation):
         startLocation = np.random.randint(0, statesEdgeSize, 2)
         goalLocation = np.random.randint(0, statesEdgeSize, 2)
         # print(start, goal)
@@ -157,9 +167,13 @@ if __name__ == "__main__":
     print("done!")
     startState = states[startLocation[0]][startLocation[1]]
     goalState = states[goalLocation[0]][goalLocation[1]]
+
+    agentPath += str(startLocation)
     print("Start location: %s" % startState.location)
     print("Goal location: %s" % goalState.location)
+    print("\n")
 
+    print("Starting iteration...")
     while startState != goalState:
         counter += 1
 
@@ -177,6 +191,7 @@ if __name__ == "__main__":
         startState.updateFValue()
         # print("State f Value: %d" % startState.fValue)
 
+        checkNearbyBlock(startState)
         openHeap.push(startState)  # insert start state into open heap
 
         ComputePath()  # run A*
@@ -185,5 +200,25 @@ if __name__ == "__main__":
         if openHeap.size() == 0:
             print("I cannot reach the target.")
             exit()
+        # print("%dth A* %dth iteration: %s" % (counter, i, openHeap.toString()))
+        tempState = goalState
+        print("Time Step %d: " % counter)
+        print("\tTree path: %s" % tempState.location, end="")
+        while (tempState.treePointer is not None) & (tempState != startState):
+            print("→%s" % tempState.treePointer.location, end="")
+            if tempState.treePointer == startState:
+                startState = tempState
+                agentPath += "→%s" % startState.location
+                continue
+            tempState = tempState.treePointer
+        print("")
+        print("\tAgent Location: %s" % startState.location)
+        print("\tGoal Location: %s" % goalState.location)
+        print("\n")
 
-        exit()  # temporary exit
+    print("I reached the target!")
+    print("Start Location: %s" % startLocation)
+    print("Goal Location: %s" % goalLocation)
+    print("Agent Path: %s" % agentPath)
+    print("Total time step: %d" % counter)
+    exit()

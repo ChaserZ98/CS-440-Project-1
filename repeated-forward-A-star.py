@@ -1,6 +1,6 @@
 import numpy as np
-from heapq import heapify, heappush, heappop
 from State import State
+from MinStateHeap import MinStateHeap
 
 
 def generateStates():
@@ -65,17 +65,67 @@ def generateActionList(state: State):
     return possibleActions
 
 
+# return a state after moving to a direction
+def stateAfterMoving(state, action):
+    x = state.location[0]
+    y = state.location[1]
+    # right
+    if action == 1:
+        return states[x + 1][y]
+    # left
+    elif action == 2:
+        return states[x - 1][y]
+    # up
+    elif action == 3:
+        return states[x][y + 1]
+    # down
+    elif action == 4:
+        return states[x][y - 1]
+    else:
+        return None
+
+
 # A* algorithm
 def ComputePath():
-    # To be done
-    minState = heappop(openHeap)    # remove a state s with the smallest f-value g(s) + h(s) from openHeap
-    while states[goal[0]][goal[1]].gValue > minState.fValue:
-        heappush(closedHeap, minState)
-        actionList = generateActionList(minState)
+    while goalState.gValue > openHeap.peek().fValue:
+        # print(openHeap.toString())
+        minState = openHeap.pop()  # Remove a state s with the smallest f-value g(s) + h(s) from openHeap
+        # print(openHeap.toString())
+        closedHeap.push(minState)
+        actionList = generateActionList(minState)  # Generate action list for the state
         for action in actionList:
-            print(action)
+            searchedState = stateAfterMoving(minState, action)  # Get the state after taking a specific action
+            # x = searchedState.location[0]
+            # y = searchedState.location[1]
+            # print(states[x][y].gValue)
+            if searchedState.searchValue < counter:
+                searchedState.gValue = 999
+                searchedState.searchValue = counter
+            if searchedState.gValue > minState.gValue + 1:
+                searchedState.gValue = minState.gValue + 1
+                searchedState.treePointer = minState
+
+                # print("openHeap: %s" % openHeap.toString())  # print openHeap
+
+                if openHeap.contains(searchedState):
+                    print("openHeap contains %d: %s" % (searchedState.fValue, searchedState.location))
+                    # To do
+                    # remove it from OPEN
+
+                # insert succ(s, a) into OPEN with f-value g(succ(s, a)) + h(succ(s, a))
+                searchedState.hValue = heuristic(searchedState, goalState)
+                searchedState.updateFValue()
+                # print("searchedState.gValue = %d" % searchedState.gValue)
+                # print("searchedState.hValue = %d" % searchedState.hValue)
+                # print("searchedState.fValue = %d" % searchedState.fValue)
+                # print("searchedState.location = %s" % searchedState.location)
+                openHeap.push(searchedState)
+                # print("openHeap: %s" % openHeap.toString())  # print openHeap
+                # print("")
+            # print(states[x][y].gValue)
+            # print(searchedState.gValue)
+
         exit()  # TO DO
-        # actionList = generateActionList(minState)
 
     return 0
 
@@ -83,51 +133,56 @@ def ComputePath():
 # main function
 if __name__ == "__main__":
     counter = 0  # A star counter
+    print("Initializing states...", end="")
     states = generateStates()  # initialize states
+    print("done!")
 
+    print("Randomly setting start location and goal location...", end="")
     # initialize start state and goal state randomly
     statesEdgeSize = len(states) - 1
     # print(statesEdgeSize)
-    start = np.random.randint(0, statesEdgeSize, 2)
-    goal = np.random.randint(0, statesEdgeSize, 2)
+    startLocation = np.random.randint(0, statesEdgeSize, 2)
+    goalLocation = np.random.randint(0, statesEdgeSize, 2)
     # print(start, goal)
     # print(states[start[0]][start[1]].isBlocked)
     # print(states[goal[0]][goal[1]].isBlocked)
 
-    while (states[start[0]][start[1]].isBlocked == 1) | (states[goal[0]][goal[1]].isBlocked == 1) | all(start == goal):
-        start = np.random.randint(0, statesEdgeSize, 2)
-        goal = np.random.randint(0, statesEdgeSize, 2)
+    while (states[startLocation[0]][startLocation[1]].isBlocked == 1) | (
+            states[goalLocation[0]][goalLocation[1]].isBlocked == 1) | all(startLocation == goalLocation):
+        startLocation = np.random.randint(0, statesEdgeSize, 2)
+        goalLocation = np.random.randint(0, statesEdgeSize, 2)
         # print(start, goal)
         # print(states[start[0]][start[1]].isBlocked)
         # print(states[goal[0]][goal[1]].isBlocked)
-    print("Start location: %s" % start)
-    print("Goal location: %s" % goal)
+    print("done!")
+    startState = states[startLocation[0]][startLocation[1]]
+    goalState = states[goalLocation[0]][goalLocation[1]]
+    print("Start location: %s" % startState.location)
+    print("Goal location: %s" % goalState.location)
 
-    while any(start != goal):
+    while startState != goalState:
         counter += 1
 
-        states[start[0]][start[1]].gValue = 0  # record cost to start state, which is 0
-        states[start[0]][start[1]].searchValue = counter  #
-        states[goal[0]][goal[1]].gValue = 999  # record cost to goal state, which uses 999 as infinity
-        states[goal[0]][goal[1]].searchValue = counter  #
+        startState.gValue = 0  # record cost to start state, which is 0
+        startState.searchValue = counter  #
+        goalState.gValue = 999  # record cost to goal state, which uses 999 as infinity
+        goalState.searchValue = counter  #
 
         # initialize open heap and closed heap
-        openHeap = []
-        heapify(openHeap)
-        closedHeap = []
-        heapify(closedHeap)
+        openHeap = MinStateHeap()
+        closedHeap = MinStateHeap()
 
         # calculate h and f value
-        states[start[0]][start[1]].hValue = heuristic(states[start[0]][start[1]], states[goal[0]][goal[1]])
-        states[start[0]][start[1]].updateFValue()
-        print("Start f Value: %d" % states[start[0]][start[1]].fValue)
+        startState.hValue = heuristic(startState, goalState)
+        startState.updateFValue()
+        # print("State f Value: %d" % startState.fValue)
 
-        heappush(openHeap, states[start[0]][start[1]])  # insert start state into open heap
+        openHeap.push(startState)  # insert start state into open heap
 
         ComputePath()  # run A*
 
         # if open heap is empty, report that can't reach the target
-        if len(openHeap) == 0:
+        if openHeap.size() == 0:
             print("I cannot reach the target.")
             exit()
 

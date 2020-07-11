@@ -58,7 +58,7 @@ class MinStateHeap(object):
         self.shiftUp(self.count)
 
     def shiftUp(self, count):
-        # Move state up to a proper location by priority to main the MinStateHeap
+        # Move state up to a proper location by priority to maintain the MinStateHeap
         while count > 1 and comparePriority(self.data[int(count / 2) - 1], ">", self.data[count - 1], 0):
             self.data[int(count / 2) - 1], self.data[count - 1] = self.data[count - 1], self.data[int(count / 2) - 1]
             count = int(count / 2)
@@ -77,20 +77,47 @@ class MinStateHeap(object):
             self.shiftDown(1)
             return ret
 
+    def remove(self, state):
+        # remove a specific state from heap
+        if self.data.index(state) == 0:
+            self.pop()
+            return True
+        else:
+            if self.count > 0:
+                while state in self.data:
+                    stateIndex = self.data.index(state)
+                    self.data[stateIndex], self.data[self.count - 1] = self.data[self.count - 1], self.data[stateIndex]
+                    # print(self.toString())
+                    del (self.data[self.count - 1])
+                    # print(self.toString())
+                    self.count -= 1
+                    # print(self.toString())
+                    self.shiftDown(stateIndex + 1)
+            else:
+                return False
+
     def shiftDown(self, count):
-        # Move state down to a proper location by priority to main the MinStateHeap
+        # Move state down to a proper location by priority to maintain the MinStateHeap
         while 2 * count <= self.count:
             # browse children
             j = 2 * count
+            # print(self.toString())
             if j + 1 <= self.count:
                 # browse right child
+                # print(priorityWithSmallerG(self.data[j]))
+                # print(priorityWithSmallerG(self.data[j - 1]))
+                # print(self.toString())
                 if comparePriority(self.data[j], "<", self.data[j - 1], 0):
                     j += 1
+            # print(priorityWithSmallerG(self.data[j]))
+            # print(priorityWithSmallerG(self.data[j - 1]))
+            # print(self.toString())
             if comparePriority(self.data[count - 1], "<=", self.data[j - 1], 0):
                 # if smaller than children, then break
                 break
             self.data[count - 1], self.data[j - 1] = self.data[j - 1], self.data[count - 1]
             count = j
+            # print(self.toString())
 
     def toString(self):
         result = "["
@@ -108,7 +135,6 @@ class MinStateHeap(object):
             return False
 
 
-
 # test code below
 # if __name__ == "__main__":
 #     states = []
@@ -122,6 +148,8 @@ class MinStateHeap(object):
 #         state.updateFValue()
 #         stateHeap.push(state)
 #     print(stateHeap.toString())
-#     min = stateHeap.pop()
-#     print(min.location, min.hValue, min.gValue, priorityWithSmallerG(min))
+#     # stateHeap.remove(stateHeap.data[0])
+#     stateHeap.pop()
+#     print(stateHeap.toString())
+#     stateHeap.remove(stateHeap.data[5])
 #     print(stateHeap.toString())

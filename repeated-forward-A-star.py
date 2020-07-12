@@ -99,9 +99,7 @@ def checkNearbyBlock(s: State):
 
 # A* algorithm
 def ComputePath():
-    i = 0
     while goalState.gValue > openHeap.peek().fValue:
-        i += 1
         # print(openHeap.toString())
         minState = openHeap.pop()  # Remove a state s with the smallest f-value g(s) + h(s) from openHeap
         # print(openHeap.toString())
@@ -109,15 +107,12 @@ def ComputePath():
         actionList = generateActionList(minState)  # Generate action list for the state
         for action in actionList:
             searchedState = stateAfterMoving(minState, action)  # Get the state after taking a specific action
-            # x = searchedState.location[0]
-            # y = searchedState.location[1]
-            # print(states[x][y].gValue)
             if searchedState.searchValue < counter:
                 searchedState.gValue = 999
                 searchedState.searchValue = counter
             if searchedState.gValue > minState.gValue + 1:
-                searchedState.gValue = minState.gValue + 1
-                searchedState.treePointer = minState
+                searchedState.gValue = minState.gValue + 1  # Update the cost
+                searchedState.treePointer = minState    # Build a forward link pointing to the last state
 
                 # print("openHeap: %s" % openHeap.toString())  # print openHeap
 
@@ -135,28 +130,30 @@ def ComputePath():
                 openHeap.push(searchedState)
                 # print("openHeap: %s" % openHeap.toString())  # print openHeap
                 # print("")
-            # print(states[x][y].gValue)
-            # print(searchedState.gValue)
 
 
 # main function
 if __name__ == "__main__":
     counter = 0  # A star counter
-    agentPath = ""  # Path recorder
+    agentPath = []  # Path recorder
     print("Initializing states...", end="")
     states = generateStates()  # initialize states
     print("done!")
 
     # initialize start state and goal state randomly
     print("Randomly setting start location and goal location...", end="")
-    statesEdgeSize = len(states) - 1
+    statesEdgeSize = len(states) - 1    # Size of states list
     # print(statesEdgeSize)
+
+    # Randomly set start location and goal location
     startLocation = np.random.randint(0, statesEdgeSize, 2)
     goalLocation = np.random.randint(0, statesEdgeSize, 2)
     # print(start, goal)
     # print(states[start[0]][start[1]].isBlocked)
     # print(states[goal[0]][goal[1]].isBlocked)
 
+    # Check if the random start location and goal location is available
+    # If not, re-generate a new random one
     while (states[startLocation[0]][startLocation[1]].actualBlockStatus == 1) | (
             states[goalLocation[0]][goalLocation[1]].actualBlockStatus == 1) | all(startLocation == goalLocation):
         startLocation = np.random.randint(0, statesEdgeSize, 2)
@@ -165,21 +162,23 @@ if __name__ == "__main__":
         # print(states[start[0]][start[1]].isBlocked)
         # print(states[goal[0]][goal[1]].isBlocked)
     print("done!")
+
+    # Respectively label the states at start location and at goal location as start state and goal state
     startState = states[startLocation[0]][startLocation[1]]
     goalState = states[goalLocation[0]][goalLocation[1]]
 
-    agentPath += str(startLocation)
-    print("Start location: %s" % startState.location)
-    print("Goal location: %s" % goalState.location)
+    agentPath.append(startLocation)     # Add the start location to the path
+    print("Start location: %s" % startState.location)   # Print the start location
+    print("Goal location: %s" % goalState.location)     # Print the goal location
     print("\n")
 
     print("Starting iteration...")
     while startState != goalState:
         counter += 1
 
-        startState.gValue = 0  # record cost to start state, which is 0
+        startState.gValue = 0  # record cost for start state to reach start state, which is 0
         startState.searchValue = counter  #
-        goalState.gValue = 999  # record cost to goal state, which uses 999 as infinity
+        goalState.gValue = 999  # record cost for goal state to reach start state, which uses 999 as infinity
         goalState.searchValue = counter  #
 
         # initialize open heap and closed heap
@@ -198,17 +197,19 @@ if __name__ == "__main__":
 
         # if open heap is empty, report that can't reach the target
         if openHeap.size() == 0:
-            print("I cannot reach the target.")
+            print("I cannot reach the target...o(╥﹏╥)o")
             exit()
-        # print("%dth A* %dth iteration: %s" % (counter, i, openHeap.toString()))
+
+        # A star search finds the start state and move start location according to the tree pointer
+        # Track the tree pointers from goal state to start state
         tempState = goalState
         print("Time Step %d: " % counter)
         print("\tTree path: %s" % tempState.location, end="")
         while (tempState.treePointer is not None) & (tempState != startState):
             print("→%s" % tempState.treePointer.location, end="")
             if tempState.treePointer == startState:
-                startState = tempState
-                agentPath += "→%s" % startState.location
+                startState = tempState  # Move the start state
+                agentPath.append(startState.location)   # Record the move of agent
                 continue
             tempState = tempState.treePointer
         print("")
@@ -216,9 +217,17 @@ if __name__ == "__main__":
         print("\tGoal Location: %s" % goalState.location)
         print("\n")
 
-    print("I reached the target!")
-    print("Start Location: %s" % startLocation)
-    print("Goal Location: %s" % goalLocation)
-    print("Agent Path: %s" % agentPath)
-    print("Total time step: %d" % counter)
+    print("I reached the target!╰(*°▽°*)╯")
+    print("Search Statistics:")
+    print("\tStart Location: %s" % startLocation)
+    print("\tGoal Location: %s" % goalLocation)
+    print("\tAgent Path: ", end="")
+    for i in range(len(agentPath)):
+        if i == 0:
+            print(agentPath[0], end="")
+            continue
+        print("→%s" % agentPath[i], end="")
+    print("\t")
+    print("\tTotal Time Step: %d" % counter)
+    print("\tActual Cost: %d" % (len(agentPath) - 1))
     exit()

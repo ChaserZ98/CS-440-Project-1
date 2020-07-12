@@ -122,7 +122,6 @@ def ComputePath():
                     openHeap.remove(searchedState)  # Remove existed state from opehHeap
 
                 # insert succ(s, a) into OPEN with f-value g(succ(s, a)) + h(succ(s, a))
-                searchedState.hValue = heuristic(searchedState, goalState)
                 searchedState.updateFValue()
                 # print("searchedState.gValue = %d" % searchedState.gValue)
                 # print("searchedState.hValue = %d" % searchedState.hValue)
@@ -137,6 +136,7 @@ def ComputePath():
 if __name__ == "__main__":
     counter = 0  # A star counter
     agentPath = []  # Path recorder
+    timeStep = 0    # Time step counter
     print("Initializing states...", end="")
     states = generateStates()  # initialize states
     print("done!")
@@ -168,10 +168,17 @@ if __name__ == "__main__":
     startState = states[startLocation[0]][startLocation[1]]
     goalState = states[goalLocation[0]][goalLocation[1]]
 
+    checkNearbyBlock(startState)    # Check the status of nearby states
+
     agentPath.append(startLocation)     # Add the start location to the path
     print("Start location: %s" % startState.location)   # Print the start location
     print("Goal location: %s" % goalState.location)     # Print the goal location
     print("")
+
+    # Compute and set heuristic value for all states
+    for stateList in states:
+        for state in stateList:
+            state.hValue = heuristic(state, goalState)
 
     print("Starting iteration...")
     while startState != goalState:
@@ -186,12 +193,10 @@ if __name__ == "__main__":
         openHeap = MinStateHeap()
         closedHeap = MinStateHeap()
 
-        # calculate h and f value
-        startState.hValue = heuristic(startState, goalState)
+        # calculate f value
         startState.updateFValue()
         # print("State f Value: %d" % startState.fValue)
 
-        checkNearbyBlock(startState)
         openHeap.push(startState)  # insert start state into open heap
 
         ComputePath()  # run A*
@@ -201,22 +206,39 @@ if __name__ == "__main__":
             print("I cannot reach the target...o(╥﹏╥)o")
             exit()
 
+        # Update heuristic value: h(s) = g(goal) - g(s)
+        for stateList in states:
+            for state in stateList:
+                if state.searchValue == counter:
+                    state.hValue = goalState.gValue - state.gValue
+
         # A star search finds the start state and move start location according to the tree pointer
         # Track the tree pointers from goal state to start state
-        tempState = goalState
-        print("Time Step %d: " % counter)
-        print("\tTree path: %s" % tempState.location, end="")
-        while (tempState.treePointer is not None) & (tempState != startState):
-            print("→%s" % tempState.treePointer.location, end="")
-            if tempState.treePointer == startState:
-                startState = tempState  # Move the start state
-                agentPath.append(startState.location)   # Record the move of agent
-                continue
-            tempState = tempState.treePointer
-        print("")
-        print("\tAgent Moves To: %s" % startState.location)
-        print("\tGoal Location: %s" % goalState.location)
-        print("")
+        while startState != goalState:
+            timeStep += 1
+            print("Time Step %d: " % timeStep)
+            print("\tTree path: %s(goal)" % goalState.location, end="")
+            nextState = goalState
+
+            # Find the next state
+            while (nextState.treePointer is not None) & (nextState != startState):
+                if nextState.treePointer == startState:
+                    break
+                nextState = nextState.treePointer
+                if nextState.discoveredBlockStatus == 1:
+                    print("→%s(Blocked)" % nextState.location, end="")
+                else:
+                    print("→%s" % nextState.location, end="")
+            print("→%s(agent)" % startState.location)
+            if nextState.discoveredBlockStatus != 1:
+                print("\tAgent Moves To: %s" % nextState.location)
+                startState = nextState
+                agentPath.append(startState.location)
+                checkNearbyBlock(startState)
+            else:
+                print("\tAgent Stops: Next state %s is blocked" % nextState.location)
+                break
+            print("")
 
     print("I reached the target!╰(*°▽°*)╯")
     print("Search Statistics:")
@@ -229,6 +251,6 @@ if __name__ == "__main__":
             continue
         print("→%s" % agentPath[i], end="")
     print("\t")
-    print("\tTotal Time Step: %d" % counter)
+    print("\tTotal Time Step: %d" % timeStep)
     print("\tActual Cost: %d" % (len(agentPath) - 1))
     exit()

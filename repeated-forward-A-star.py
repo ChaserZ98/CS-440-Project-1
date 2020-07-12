@@ -113,7 +113,7 @@ def ComputePath():
                 searchedState.searchValue = counter
             if searchedState.gValue > minState.gValue + 1:
                 searchedState.gValue = minState.gValue + 1  # Update the cost
-                searchedState.treePointer = minState  # Build a forward link pointing to the last state
+                searchedState.treePointer = minState    # Build a forward link pointing to the last state
 
                 # print("openHeap: %s" % openHeap.toString())  # print openHeap
 
@@ -170,7 +170,7 @@ if __name__ == "__main__":
 
     checkNearbyBlock(startState)    # Check the status of nearby states
 
-    agentPath.append(startLocation) # Add the start location to the path
+    agentPath.append(startLocation)     # Add the start location to the path
     print("Start location: %s" % startState.location)   # Print the start location
     print("Goal location: %s" % goalState.location)     # Print the goal location
     print("")

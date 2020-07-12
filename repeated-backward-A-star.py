@@ -147,10 +147,8 @@ if __name__ == "__main__":
     # print(statesEdgeSize)
 
     # Randomly set start location and goal location
-    # startLocation = np.random.randint(0, statesEdgeSize, 2)
-    # goalLocation = np.random.randint(0, statesEdgeSize, 2)
-    startLocation = np.array([0, 1])
-    goalLocation = np.array([4, 2])
+    startLocation = np.random.randint(0, statesEdgeSize, 2)
+    goalLocation = np.random.randint(0, statesEdgeSize, 2)
     # print(start, goal)
     # print(states[start[0]][start[1]].isBlocked)
     # print(states[goal[0]][goal[1]].isBlocked)

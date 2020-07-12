@@ -213,7 +213,7 @@ if __name__ == "__main__":
                 continue
             tempState = tempState.treePointer
         print("")
-        print("\tAgent Location: %s" % startState.location)
+        print("\tAgent Moves To: %s" % startState.location)
         print("\tGoal Location: %s" % goalState.location)
         print("\n")
 

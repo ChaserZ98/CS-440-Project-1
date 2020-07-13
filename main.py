@@ -88,26 +88,26 @@ if __name__ == '__main__':
     print("Repeated Forward A Star Smaller G First: ")
     agentPath = forwardAStar.repeatedForwardAStar(states, startLocation, goalLocation, isLargerGFirst)
     if agentPath is not False:
-        visualizePath(mazeType, agentPath, "adaptiveAStar")
+        visualizePath(mazeType, agentPath, "Forward A Star Smaller G First")
     print("")
 
     states = commonFunctions.generateStates(mazeType)  # Reset the states
     print("Repeated Forward A Star Bigger G First: ")
     agentPath = forwardAStar.repeatedForwardAStar(states, startLocation, goalLocation, not isLargerGFirst)
     if agentPath is not False:
-        visualizePath(mazeType, agentPath, "adaptiveAStar")
+        visualizePath(mazeType, agentPath, "Forward A Star Larger G First")
     print("")
 
     states = commonFunctions.generateStates(mazeType)  # Reset the states
     print("Repeated Backward A Star: ")
     agentPath = backwardAStar.repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst)
     if agentPath is not False:
-        visualizePath(mazeType, agentPath, "adaptiveAStar")
+        visualizePath(mazeType, agentPath, "Backward A Star")
     print("")
 
     states = commonFunctions.generateStates(mazeType)  # Reset the states
     print("Repeated Adaptive A Star: ")
     agentPath = adaptiveAStar.repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst)
     if agentPath is not False:
-        visualizePath(mazeType, agentPath, "adaptiveAStar")
+        visualizePath(mazeType, agentPath, "Adaptive A Star")
     print("")

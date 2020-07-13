@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import shutil
+import time
 
 
 def visualizePath(agentPath, AStarType):
@@ -26,6 +27,7 @@ def visualizePath(agentPath, AStarType):
             if data_set[row_index][column_index] == 1:
                 data_set[row_index][column_index] = 20
 
+    plt.ion()
     plt.figure()
     for index in range(len(agentPath)):
         if data_set[agentPath[index][0]][agentPath[index][1]] == 0:
@@ -35,9 +37,14 @@ def visualizePath(agentPath, AStarType):
 
         plt.imshow(data_set, cmap=plt.cm.binary, interpolation='nearest')
         plt.xticks([]), plt.yticks([])
-        # plt.show()
-        plt.savefig("pics/result/" + AStarType + "/step%d.png" % index)
-        np.savetxt("arrs/result/" + AStarType + "/step%d.txt" % index, data_set, fmt='%d')
+
+        plt.draw()
+        plt.pause(0.1)
+    plt.title("Finished!")
+    plt.ioff()
+    plt.show()
+    # plt.savefig("pics/result/" + AStarType + "/step%d.png" % index)
+    # np.savetxt("arrs/result/" + AStarType + "/step%d.txt" % index, data_set, fmt='%d')
 
 
 if __name__ == '__main__':
@@ -64,13 +71,12 @@ if __name__ == '__main__':
     visualizePath(agentPath, "forwardAStar")
     # print(agentPath)
 
-    states = commonFunctions.generateStates()   # Reset the states
+    states = commonFunctions.generateStates()  # Reset the states
     print("Repeated Backward A Star: ")
     agentPath = backwardAStar.repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst)
     visualizePath(agentPath, "backwardAStar")
     #
-    states = commonFunctions.generateStates()   # Reset the states
+    states = commonFunctions.generateStates()  # Reset the states
     print("Repeated Adaptive A Star: ")
     agentPath = adaptiveAStar.repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst)
     visualizePath(agentPath, "adaptiveAStar")
-

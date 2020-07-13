@@ -101,7 +101,7 @@ def randGridMaze(number, width=101, height=101):
     np.savetxt("arrs/randGrid/{0:0=2d}.txt".format(number), Z, fmt='%d')
 
 
-if __name__ == "__main__":
+def generateGridWorld(number: int):
     if os.path.exists("arrs"):
         shutil.rmtree("arrs")
     if os.path.exists("pics"):
@@ -115,7 +115,7 @@ if __name__ == "__main__":
 
     # specify the number of grids you want to generate
     # n_grids = int(sys.argv[1])
-    n_grids = int(1)
+    n_grids = int(number)
 
     multiprocessing.freeze_support()
     num_proc = multiprocessing.cpu_count()

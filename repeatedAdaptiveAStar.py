@@ -1,4 +1,3 @@
-import numpy as np
 from MinStateHeap import MinStateHeap
 import time
 import commonFunctions

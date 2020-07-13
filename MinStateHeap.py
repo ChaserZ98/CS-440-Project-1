@@ -1,4 +1,3 @@
-import random
 from State import State
 
 
@@ -134,23 +133,3 @@ class MinStateHeap(object):
             return True
         else:
             return False
-
-
-# test code below
-# if __name__ == "__main__":
-#     states = []
-#     for i in range(10):
-#         states.append(State(i, i, 0))
-#
-#     stateHeap = MinStateHeap()
-#     for state in states:
-#         state.hValue = random.randint(0, 5)
-#         state.gValue = random.randint(0, 10)
-#         state.updateFValue()
-#         stateHeap.push(state)
-#     print(stateHeap.toString())
-#     # stateHeap.remove(stateHeap.data[0])
-#     stateHeap.pop()
-#     print(stateHeap.toString())
-#     stateHeap.remove(stateHeap.data[5])
-#     print(stateHeap.toString())

@@ -1,101 +1,7 @@
 import numpy as np
-from State import State
 from MinStateHeap import MinStateHeap
-
-
-def generateStates():
-    txt_path = 'arrs/backTrackerMazes/01.txt'  # path maze data file
-    f = open(txt_path)  # open file
-    data_lists = f.readlines()  # read file data
-    dataset = []
-
-    # convert data in file to list
-    for data in data_lists:
-        data1 = data.strip('\n')
-        data2 = data1.split(' ')
-        dataset.append(data2)
-    # convert list to states list and return
-    return [[State(x, y, int(dataset[x][y])) for y in range(len(dataset[0]))] for x in range(len(dataset))]
-
-
-# heuristic function (Manhattan distance)
-def heuristic(s1: State, s2: State):
-    return abs(s1.location[0] - s2.location[0]) + abs(s1.location[1] - s2.location[1])
-
-
-# generate a list of possible actions for current state
-# 1: down; 2: up; 3: right; 4: left
-def generateActionList(state: State):
-    possibleActions = []
-    # print("State location: %s" % state.location)
-    row = state.location[0]
-    column = state.location[1]
-
-    #   Check possible actions
-    #   Check down
-    if row + 1 <= len(states) - 1:
-        if (states[row + 1][column].discoveredBlockStatus == 0) & (not closedHeap.contains(states[row + 1][column])):
-            possibleActions.append(1)
-        # else:
-        # print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (x + 1, y, x + 1, y, states[x + 1][y].isBlocked))
-    #   Check up
-    if row - 1 >= 0:
-        if (states[row - 1][column].discoveredBlockStatus == 0) & (not closedHeap.contains(states[row - 1][column])):
-            possibleActions.append(2)
-        # else:
-        # print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (x - 1, y, x - 1, y, states[x - 1][y].isBlocked))
-    #   Check right
-    if column + 1 <= len(states) - 1:
-        if (states[row][column + 1].discoveredBlockStatus == 0) & (not closedHeap.contains(states[row][column + 1])):
-            possibleActions.append(3)
-        # else:
-        # print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (x, y + 1, x, y + 1, states[x][y + 1].isBlocked))
-    #   Check left
-    if column - 1 >= 0:
-        if (states[row][column - 1].discoveredBlockStatus == 0) & (not closedHeap.contains(states[row][column - 1])):
-            possibleActions.append(4)
-        # else:
-        # print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (x, y - 1, x, y - 1, states[x][y - 1].isBlocked))
-    # print("\tPossible action: %s" % possibleActions)
-
-    return possibleActions
-
-
-# return a state after moving to a direction
-def stateAfterMoving(state, action):
-    row = state.location[0]
-    column = state.location[1]
-    # down
-    if action == 1:
-        return states[row + 1][column]
-    # up
-    elif action == 2:
-        return states[row - 1][column]
-    # right
-    elif action == 3:
-        return states[row][column + 1]
-    # left
-    elif action == 4:
-        return states[row][column - 1]
-    else:
-        return None
-
-
-def checkNearbyBlock(s: State):
-    row = s.location[0]
-    column = s.location[1]
-    # Check down
-    if row + 1 <= len(states) - 1:
-        states[row + 1][column].discoveredBlockStatus = states[row + 1][column].actualBlockStatus
-    # Check up
-    if row - 1 >= 0:
-        states[row - 1][column].discoveredBlockStatus = states[row - 1][column].actualBlockStatus
-    # Check right
-    if column + 1 <= len(states) - 1:
-        states[row][column + 1].discoveredBlockStatus = states[row][column + 1].actualBlockStatus
-    # Check left
-    if column - 1 >= 0:
-        states[row][column - 1].discoveredBlockStatus = states[row][column - 1].actualBlockStatus
+import time
+import commonFunction
 
 
 # A* algorithm
@@ -105,15 +11,15 @@ def ComputePath():
         minState = openHeap.pop()  # Remove a state s with the smallest f-value g(s) + h(s) from openHeap
         # print(openHeap.toString())
         closedHeap.push(minState)
-        actionList = generateActionList(minState)  # Generate action list for the state
+        actionList = commonFunction.generateActionList(minState, states, closedHeap)  # Generate action list for the state
         for action in actionList:
-            searchedState = stateAfterMoving(minState, action)  # Get the state after taking a specific action
+            searchedState = commonFunction.stateAfterMoving(minState, action, states)  # Get the state after taking a specific action
             if searchedState.searchValue < counter:
                 searchedState.gValue = 99999
                 searchedState.searchValue = counter
             if searchedState.gValue > minState.gValue + 1:
                 searchedState.gValue = minState.gValue + 1  # Update the cost
-                searchedState.treePointer = minState    # Build a forward link pointing to the last state
+                searchedState.treePointer = minState  # Build a forward link pointing to the last state
 
                 # print("openHeap: %s" % openHeap.toString())  # print openHeap
 
@@ -136,14 +42,15 @@ def ComputePath():
 if __name__ == "__main__":
     counter = 0  # A star counter
     agentPath = []  # Path recorder
-    timeStep = 0    # Time step counter
+    timeStep = 0  # Time step counter
+    numberOfExpandedCells = 0  # Number of Expanded Cells
     print("Initializing states...", end="")
-    states = generateStates()  # initialize states
+    states = commonFunction.generateStates()    # initialize states
     print("done!")
 
     # initialize start state and goal state randomly
     print("Randomly setting start location and goal location...", end="")
-    statesEdgeSize = len(states)    # Size of states list
+    statesEdgeSize = len(states)  # Size of states list
     # print(statesEdgeSize)
 
     # Randomly set start location and goal location
@@ -168,19 +75,20 @@ if __name__ == "__main__":
     startState = states[startLocation[0]][startLocation[1]]
     goalState = states[goalLocation[0]][goalLocation[1]]
 
-    checkNearbyBlock(startState)    # Check the status of nearby states
+    commonFunction.checkNearbyBlock(startState, states)  # Check the status of nearby states
 
-    agentPath.append(startLocation)     # Add the start location to the path
-    print("Start location: %s" % startState.location)   # Print the start location
-    print("Goal location: %s" % goalState.location)     # Print the goal location
+    agentPath.append(startLocation)  # Add the start location to the path
+    print("Start location: %s" % startState.location)  # Print the start location
+    print("Goal location: %s" % goalState.location)  # Print the goal location
     print("")
 
     # Compute and set heuristic value for all states
     for stateList in states:
         for state in stateList:
-            state.hValue = heuristic(state, goalState)
+            state.hValue = commonFunction.heuristic(state, goalState)
 
     print("Starting iteration...")
+    startTime = time.time()  # Record start time
     while startState != goalState:
         counter += 1
 
@@ -228,12 +136,12 @@ if __name__ == "__main__":
                 print("\tAgent Moves To: %s" % nextState.location)
                 startState = nextState
                 agentPath.append(startState.location)
-                checkNearbyBlock(startState)
+                commonFunction.checkNearbyBlock(startState, states)
             else:
                 print("\tAgent Stops: Next state %s is blocked" % nextState.location)
                 break
             print("")
-
+    endTime = time.time()  # Record end time
     print("I reached the target!╰(*°▽°*)╯")
     print("Search Statistics:")
     print("\tStart Location: %s" % startLocation)
@@ -247,4 +155,5 @@ if __name__ == "__main__":
     print("\t")
     print("\tTotal Time Step: %d" % timeStep)
     print("\tActual Cost: %d" % (len(agentPath) - 1))
+    print("\tTime Cost: %.10f seconds" % (endTime - startTime))
     exit()

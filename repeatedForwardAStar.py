@@ -4,9 +4,9 @@ import time
 import commonFunctions
 
 
-# A* algorithm
-def ComputePath():
-    while startState.gValue > openHeap.peek().fValue:
+# Forward A* algorithm
+def ComputePath(openHeap, closedHeap, goalState, expandedStates, counter, states):
+    while goalState.gValue > openHeap.peek().fValue:
         # print(openHeap.toString())
         minState = openHeap.pop()  # Remove a state s with the smallest f-value g(s) + h(s) from openHeap
         expandedStates.append(minState.location)
@@ -20,7 +20,7 @@ def ComputePath():
                 searchedState.searchValue = counter
             if searchedState.gValue > minState.gValue + 1:
                 searchedState.gValue = minState.gValue + 1  # Update the cost
-                searchedState.treePointer = minState    # Build a forward link pointing to the last state
+                searchedState.treePointer = minState  # Build a forward link pointing to the last state
 
                 # print("openHeap: %s" % openHeap.toString())  # print openHeap
 
@@ -40,7 +40,7 @@ def ComputePath():
 
 
 # main function
-if __name__ == "__main__":
+def repeatedForwardAStar(isLargerGFirst: bool):
     counter = 0  # A star counter
     agentPath = []  # Path recorder
     timeStep = 0  # Time step counter
@@ -89,62 +89,60 @@ if __name__ == "__main__":
             state.hValue = commonFunctions.heuristic(state, goalState)
 
     print("Starting iteration...")
-    startTime = time.time()     # Record start time
-    while goalState != startState:
+    startTime = time.time()  # Record start time
+    while startState != goalState:
         counter += 1
 
-        startState.gValue = 99999  # record cost for start state to reach goal state, which uses 999 as infinity
+        startState.gValue = 0  # record cost for start state to reach start state, which is 0
         startState.searchValue = counter  #
-        goalState.gValue = 0  # record cost for goal state to reach goal state, which is 0
+        goalState.gValue = 99999  # record cost for goal state to reach start state, which uses 999 as infinity
         goalState.searchValue = counter  #
 
         # initialize open heap and closed heap
-        openHeap = MinStateHeap()
-        closedHeap = MinStateHeap()
+        openHeap = MinStateHeap(isLargerGFirst)
+        closedHeap = MinStateHeap(isLargerGFirst)
 
         # calculate f value
         startState.updateFValue()
         # print("State f Value: %d" % startState.fValue)
 
-        openHeap.push(goalState)  # insert goal state into open heap
+        openHeap.push(startState)  # insert start state into open heap
 
-        ComputePath()  # run A*
+        ComputePath(openHeap, closedHeap, goalState, expandedStates, counter, states)  # Run forwardA*
 
         # if open heap is empty, report that can't reach the target
         if openHeap.size() == 0:
             print("I cannot reach the target...o(╥﹏╥)o")
-            exit()
+            return False
 
         # A star search finds the start state and move start location according to the tree pointer
         # Track the tree pointers from goal state to start state
         while startState != goalState:
             timeStep += 1
             print("Time Step %d: " % timeStep)
-            print("\tTree path: %s(agent)" % startState.location, end="")
-            nextState = startState
+            print("\tTree path: %s(goal)" % goalState.location, end="")
+            nextState = goalState
 
             # Find the next state
-            while (nextState.treePointer is not None) & (nextState != goalState):
+            while (nextState.treePointer is not None) & (nextState != startState):
+                if nextState.treePointer == startState:
+                    break
                 nextState = nextState.treePointer
                 if nextState.discoveredBlockStatus == 1:
                     print("→%s(Blocked)" % nextState.location, end="")
                 else:
                     print("→%s" % nextState.location, end="")
-            print("→%s(goal)" % goalState.location)
-            if startState.treePointer.discoveredBlockStatus != 1:
-                startState = startState.treePointer
+            print("→%s(agent)" % startState.location)
+            if nextState.discoveredBlockStatus != 1:
+                print("\tAgent Moves To: %s" % nextState.location)
+                startState = nextState
                 agentPath.append(startState.location)
                 commonFunctions.checkNearbyBlock(startState, states)
-                print("\tAgent Moves To: %s" % startState.location)
             else:
-                print("\tAgent Stops: Next state %s is blocked" % startState.treePointer.location)
+                print("\tAgent Stops: Next state %s is blocked" % nextState.location)
                 break
             print("")
-
-        # Update heuristic value for all states
-        for stateList in states:
-            for state in stateList:
-                state.hValue = commonFunctions.heuristic(state, startState)
+    expandedStates.append(goalState.location)
     endTime = time.time()  # Record end time
     print("I reached the target!╰(*°▽°*)╯")
     print("Search Statistics:")
@@ -168,4 +166,4 @@ if __name__ == "__main__":
         print(",%s" % expandedStates[i], end="")
     print("")
     print("\tNumber of Expanded Cells: %d" % len(expandedStates))
-    exit()
+    return True

@@ -4,8 +4,8 @@ import time
 import commonFunctions
 
 
-# A* algorithm
-def ComputePath():
+# Adaptive A* algorithm
+def ComputePath(openHeap, closedHeap, goalState, expandedStates, counter, states):
     while goalState.gValue > openHeap.peek().fValue:
         # print(openHeap.toString())
         minState = openHeap.pop()  # Remove a state s with the smallest f-value g(s) + h(s) from openHeap
@@ -40,7 +40,7 @@ def ComputePath():
 
 
 # main function
-if __name__ == "__main__":
+def repeatedAdaptiveAStar(isLargerGFirst: bool):
     counter = 0  # A star counter
     agentPath = []  # Path recorder
     timeStep = 0  # Time step counter
@@ -99,8 +99,8 @@ if __name__ == "__main__":
         goalState.searchValue = counter  #
 
         # initialize open heap and closed heap
-        openHeap = MinStateHeap()
-        closedHeap = MinStateHeap()
+        openHeap = MinStateHeap(isLargerGFirst)
+        closedHeap = MinStateHeap(isLargerGFirst)
 
         # calculate f value
         startState.updateFValue()
@@ -108,12 +108,12 @@ if __name__ == "__main__":
 
         openHeap.push(startState)  # insert start state into open heap
 
-        ComputePath()  # run A*
+        ComputePath(openHeap, closedHeap, goalState, expandedStates, counter, states)  # Run adaptive A*
 
         # if open heap is empty, report that can't reach the target
         if openHeap.size() == 0:
             print("I cannot reach the target...o(╥﹏╥)o")
-            exit()
+            return False
 
         # Update heuristic value: h(s) = g(goal) - g(s)
         for stateList in states:
@@ -148,6 +148,7 @@ if __name__ == "__main__":
                 print("\tAgent Stops: Next state %s is blocked" % nextState.location)
                 break
             print("")
+    expandedStates.append(goalState.location)
     endTime = time.time()  # Record end time
     print("I reached the target!╰(*°▽°*)╯")
     print("Search Statistics:")
@@ -171,4 +172,4 @@ if __name__ == "__main__":
         print(",%s" % expandedStates[i], end="")
     print("")
     print("\tNumber of Expanded Cells: %d" % len(expandedStates))
-    exit()
+    return True

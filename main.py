@@ -2,6 +2,43 @@ import repeatedForwardAStar as forwardAStar
 import repeatedBackwardAStar as backwardAStar
 import repeatedAdaptiveAStar as adaptiveAStar
 import commonFunctions
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import shutil
+
+
+def visualizePath(agentPath, AStarType):
+    if not os.path.exists("pics/result"):
+        os.mkdir("pics/result")
+    if not os.path.exists("arrs/result"):
+        os.mkdir("arrs/result")
+    if os.path.exists("pics/result/" + AStarType):
+        shutil.rmtree("pics/result/" + AStarType)
+    if os.path.exists("arrs/result/" + AStarType):
+        shutil.rmtree("arrs/result/" + AStarType)
+    os.mkdir("pics/result/" + AStarType)
+    os.mkdir("arrs/result/" + AStarType)
+
+    data_set = np.loadtxt('arrs/backTrackerMazes/01.txt', dtype=np.int32)
+    for row_index in range(len(data_set)):
+        for column_index in range(len(data_set)):
+            if data_set[row_index][column_index] == 1:
+                data_set[row_index][column_index] = 20
+
+    plt.figure()
+    for index in range(len(agentPath)):
+        if data_set[agentPath[index][0]][agentPath[index][1]] == 0:
+            data_set[agentPath[index][0]][agentPath[index][1]] = 10
+        else:
+            data_set[agentPath[index][0]][agentPath[index][1]] += 1
+
+        plt.imshow(data_set, cmap=plt.cm.binary, interpolation='nearest')
+        plt.xticks([]), plt.yticks([])
+        # plt.show()
+        plt.savefig("pics/result/" + AStarType + "/step%d.png" % index)
+        np.savetxt("arrs/result/" + AStarType + "/step%d.txt" % index, data_set, fmt='%d')
+
 
 if __name__ == '__main__':
 
@@ -23,12 +60,17 @@ if __name__ == '__main__':
 
     # A Star Search
     print("Repeated Forward A Star: ")
-    forwardAStar.repeatedForwardAStar(states, startLocation, goalLocation, isLargerGFirst)
+    agentPath = forwardAStar.repeatedForwardAStar(states, startLocation, goalLocation, isLargerGFirst)
+    visualizePath(agentPath, "forwardAStar")
+    # print(agentPath)
 
     states = commonFunctions.generateStates()   # Reset the states
     print("Repeated Backward A Star: ")
-    backwardAStar.repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst)
-
+    agentPath = backwardAStar.repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst)
+    visualizePath(agentPath, "backwardAStar")
+    #
     states = commonFunctions.generateStates()   # Reset the states
     print("Repeated Adaptive A Star: ")
-    adaptiveAStar.repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst)
+    agentPath = adaptiveAStar.repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst)
+    visualizePath(agentPath, "adaptiveAStar")
+

@@ -131,13 +131,13 @@ def repeatedForwardAStar(states, startLocation, goalLocation, isLargerGFirst: bo
     print("\tTotal Time Step: %d" % timeStep)
     print("\tActual Cost: %d" % (len(agentPath) - 1))
     print("\tTime Cost: %.10f seconds" % (endTime - startTime))
-    print("\tExpanded Cells: ", end="")
-    for i in range(len(expandedStates)):
-        if i == 0:
-            print(expandedStates[0], end="")
-            continue
-        print(",%s" % expandedStates[i], end="")
-    print("")
+    # print("\tExpanded Cells: ", end="")
+    # for i in range(len(expandedStates)):
+    #     if i == 0:
+    #         print(expandedStates[0], end="")
+    #         continue
+    #     print(",%s" % expandedStates[i], end="")
+    # print("")
     print("\tNumber of Expanded Cells: %d" % len(expandedStates))
     print("")
-    return True
+    return agentPath

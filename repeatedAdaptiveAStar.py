@@ -99,8 +99,8 @@ def repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst: b
         # Track the tree pointers from goal state to start state
         while startState != goalState:
             timeStep += 1
-            print("Time Step %d: " % timeStep)
-            print("\tTree path: %s(goal)" % goalState.location, end="")
+            # print("Time Step %d: " % timeStep)
+            # print("\tTree path: %s(goal)" % goalState.location, end="")
             nextState = goalState
 
             # Find the next state
@@ -108,20 +108,20 @@ def repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst: b
                 if nextState.treePointer == startState:
                     break
                 nextState = nextState.treePointer
-                if nextState.discoveredBlockStatus == 1:
-                    print("→%s(Blocked)" % nextState.location, end="")
-                else:
-                    print("→%s" % nextState.location, end="")
-            print("→%s(agent)" % startState.location)
+                # if nextState.discoveredBlockStatus == 1:
+                #     print("→%s(Blocked)" % nextState.location, end="")
+                # else:
+                #     print("→%s" % nextState.location, end="")
+            # print("→%s(agent)" % startState.location)
             if nextState.discoveredBlockStatus != 1:
-                print("\tAgent Moves To: %s" % nextState.location)
+                # print("\tAgent Moves To: %s" % nextState.location)
                 startState = nextState
                 agentPath.append(startState.location)
                 commonFunctions.checkNearbyBlock(startState, states)
             else:
-                print("\tAgent Stops: Next state %s is blocked" % nextState.location)
+                # print("\tAgent Stops: Next state %s is blocked" % nextState.location)
                 break
-            print("")
+            # print("")
     expandedStates.append(goalState.location)
     endTime = time.time()  # Record end time
     print("I reached the target!╰(*°▽°*)╯")
@@ -146,4 +146,5 @@ def repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst: b
         print(",%s" % expandedStates[i], end="")
     print("")
     print("\tNumber of Expanded Cells: %d" % len(expandedStates))
+    print("")
     return True

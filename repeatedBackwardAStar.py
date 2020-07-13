@@ -93,27 +93,27 @@ def repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst: b
         # Track the tree pointers from goal state to start state
         while startState != goalState:
             timeStep += 1
-            print("Time Step %d: " % timeStep)
-            print("\tTree path: %s(agent)" % startState.location, end="")
+            # print("Time Step %d: " % timeStep)
+            # print("\tTree path: %s(agent)" % startState.location, end="")
             nextState = startState
 
             # Find the next state
             while (nextState.treePointer is not None) & (nextState != goalState):
                 nextState = nextState.treePointer
-                if nextState.discoveredBlockStatus == 1:
-                    print("→%s(Blocked)" % nextState.location, end="")
-                else:
-                    print("→%s" % nextState.location, end="")
-            print("→%s(goal)" % goalState.location)
+                # if nextState.discoveredBlockStatus == 1:
+                #     print("→%s(Blocked)" % nextState.location, end="")
+                # else:
+                #     print("→%s" % nextState.location, end="")
+            # print("→%s(goal)" % goalState.location)
             if startState.treePointer.discoveredBlockStatus != 1:
                 startState = startState.treePointer
                 agentPath.append(startState.location)
                 commonFunctions.checkNearbyBlock(startState, states)
-                print("\tAgent Moves To: %s" % startState.location)
+                # print("\tAgent Moves To: %s" % startState.location)
             else:
-                print("\tAgent Stops: Next state %s is blocked" % startState.treePointer.location)
+                # print("\tAgent Stops: Next state %s is blocked" % startState.treePointer.location)
                 break
-            print("")
+            # print("")
 
         # Update heuristic value for all states
         for stateList in states:
@@ -143,4 +143,5 @@ def repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst: b
         print(",%s" % expandedStates[i], end="")
     print("")
     print("\tNumber of Expanded Cells: %d" % len(expandedStates))
+    print("")
     return True

@@ -36,6 +36,8 @@ def ComputePath(openHeap, closedHeap, goalState, expandedStates, counter, states
                 openHeap.push(searchedState)
                 # print("openHeap: %s" % openHeap.toString())  # print openHeap
                 # print("")
+        if openHeap.isEmpty():
+            break
 
 
 # main function
@@ -130,6 +132,7 @@ def repeatedForwardAStar(states, startLocation, goalLocation, isLargerGFirst: bo
     print("")
     print("\tTotal Time Step: %d" % timeStep)
     print("\tActual Cost: %d" % (len(agentPath) - 1))
+    print("\tNumber of A Star Iterations: %d " % counter)
     print("\tTime Cost: %.10f seconds" % (endTime - startTime))
     # print("\tExpanded Cells: ", end="")
     # for i in range(len(expandedStates)):

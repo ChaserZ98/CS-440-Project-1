@@ -36,6 +36,8 @@ def ComputePath(openHeap, closedHeap, goalState, expandedStates, counter, states
                 openHeap.push(searchedState)
                 # print("openHeap: %s" % openHeap.toString())  # print openHeap
                 # print("")
+        if openHeap.isEmpty():
+            break
 
 
 # main function
@@ -89,10 +91,13 @@ def repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst: b
             return False
 
         # Update heuristic value: h(s) = g(goal) - g(s)
-        for stateList in states:
-            for state in stateList:
-                if state.searchValue == counter:
-                    state.hValue = goalState.gValue - state.gValue
+        while not closedHeap.isEmpty():
+            tempState = closedHeap.pop()
+            tempState.hValue = goalState.gValue - tempState.gValue
+        # for stateList in states:
+        #     for state in stateList:
+        #         if state.searchValue == counter:
+        #             state.hValue = goalState.gValue - state.gValue
 
         # A star search finds the start state and move start location according to the tree pointer
         # Track the tree pointers from goal state to start state
@@ -136,6 +141,7 @@ def repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst: b
     print("")
     print("\tTotal Time Step: %d" % timeStep)
     print("\tActual Cost: %d" % (len(agentPath) - 1))
+    print("\tNumber of A Star Iterations: %d " % counter)
     print("\tTime Cost: %.10f seconds" % (endTime - startTime))
     # print("\tExpanded Cells: ", end="")
     # for i in range(len(expandedStates)):

@@ -3,8 +3,8 @@ from State import State
 
 
 # compare the priority of two states by a specific sign
-def comparePriority(s1: State, sign: str, s2: State, largerGFirst: int):
-    if largerGFirst == 1:
+def comparePriority(s1: State, sign: str, s2: State, isLargerGFirst: bool):
+    if isLargerGFirst is True:
         # use tie breaker that prioritize the state with larger G value
         if sign == "==":
             return priorityWithLargerG(s1) == priorityWithLargerG(s2)
@@ -41,9 +41,10 @@ def priorityWithSmallerG(s: State):
 
 
 class MinStateHeap(object):
-    def __init__(self):
+    def __init__(self, isLargerGFirst: bool):
         self.data = []  # heap list
         self.count = len(self.data)  # number of elements
+        self.isLargerGFirst = isLargerGFirst
 
     def size(self):
         return self.count
@@ -59,7 +60,7 @@ class MinStateHeap(object):
 
     def shiftUp(self, count):
         # Move state up to a proper location by priority to maintain the MinStateHeap
-        while count > 1 and comparePriority(self.data[int(count / 2) - 1], ">", self.data[count - 1], 0):
+        while count > 1 and comparePriority(self.data[int(count / 2) - 1], ">", self.data[count - 1], self.isLargerGFirst):
             self.data[int(count / 2) - 1], self.data[count - 1] = self.data[count - 1], self.data[int(count / 2) - 1]
             count = int(count / 2)
 
@@ -107,12 +108,12 @@ class MinStateHeap(object):
                 # print(priorityWithSmallerG(self.data[j]))
                 # print(priorityWithSmallerG(self.data[j - 1]))
                 # print(self.toString())
-                if comparePriority(self.data[j], "<", self.data[j - 1], 0):
+                if comparePriority(self.data[j], "<", self.data[j - 1], self.isLargerGFirst):
                     j += 1
             # print(priorityWithSmallerG(self.data[j]))
             # print(priorityWithSmallerG(self.data[j - 1]))
             # print(self.toString())
-            if comparePriority(self.data[count - 1], "<=", self.data[j - 1], 0):
+            if comparePriority(self.data[count - 1], "<=", self.data[j - 1], self.isLargerGFirst):
                 # if smaller than children, then break
                 break
             self.data[count - 1], self.data[j - 1] = self.data[j - 1], self.data[count - 1]

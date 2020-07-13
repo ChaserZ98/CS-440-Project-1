@@ -40,37 +40,11 @@ def ComputePath(openHeap, closedHeap, goalState, expandedStates, counter, states
 
 
 # main function
-def repeatedAdaptiveAStar(isLargerGFirst: bool):
+def repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst: bool):
     counter = 0  # A star counter
     agentPath = []  # Path recorder
     timeStep = 0  # Time step counter
     expandedStates = []  # Expanded states during the whole repeated A star search
-    print("Initializing states...", end="")
-    states = commonFunctions.generateStates()  # initialize states
-    print("done!")
-
-    # initialize start state and goal state randomly
-    print("Randomly setting start location and goal location...", end="")
-    statesEdgeSize = len(states)  # Size of states list
-    # print(statesEdgeSize)
-
-    # Randomly set start location and goal location
-    startLocation = np.random.randint(0, statesEdgeSize, 2)
-    goalLocation = np.random.randint(0, statesEdgeSize, 2)
-    # print(start, goal)
-    # print(states[start[0]][start[1]].isBlocked)
-    # print(states[goal[0]][goal[1]].isBlocked)
-
-    # Check if the random start location and goal location is available
-    # If not, re-generate a new random one
-    while (states[startLocation[0]][startLocation[1]].actualBlockStatus == 1) | (
-            states[goalLocation[0]][goalLocation[1]].actualBlockStatus == 1) | all(startLocation == goalLocation):
-        startLocation = np.random.randint(0, statesEdgeSize, 2)
-        goalLocation = np.random.randint(0, statesEdgeSize, 2)
-        # print(start, goal)
-        # print(states[start[0]][start[1]].isBlocked)
-        # print(states[goal[0]][goal[1]].isBlocked)
-    print("done!")
 
     # Respectively label the states at start location and at goal location as start state and goal state
     startState = states[startLocation[0]][startLocation[1]]

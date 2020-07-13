@@ -52,16 +52,16 @@ def repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst: b
     commonFunctions.checkNearbyBlock(startState, states)  # Check the status of nearby states
 
     agentPath.append(startLocation)  # Add the start location to the path
-    print("Start location: %s" % startState.location)  # Print the start location
-    print("Goal location: %s" % goalState.location)  # Print the goal location
-    print("")
+    # print("Start location: %s" % startState.location)  # Print the start location
+    # print("Goal location: %s" % goalState.location)  # Print the goal location
+    # print("")
 
     # Compute and set heuristic value for all states
     for stateList in states:
         for state in stateList:
             state.hValue = commonFunctions.heuristic(state, goalState)
 
-    print("Starting iteration...")
+    print("Iterating...")
     startTime = time.time()  # Record start time
     while startState != goalState:
         counter += 1

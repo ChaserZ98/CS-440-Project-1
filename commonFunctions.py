@@ -1,4 +1,5 @@
 from State import State
+import numpy as np
 
 
 # Generate states from files
@@ -96,3 +97,12 @@ def checkNearbyBlock(s: State, states):
     # Check left
     if column - 1 >= 0:
         states[row][column - 1].discoveredBlockStatus = states[row][column - 1].actualBlockStatus
+
+
+# Randomly generate a location that is unblocked
+def generateUnblockedLocation(states):
+    statesEdgeSize = len(states)
+    location = np.random.randint(0, statesEdgeSize, 2)
+    while states[location[0]][location[1]].actualBlockStatus == 1:
+        location = np.random.randint(0, statesEdgeSize, 2)
+    return location

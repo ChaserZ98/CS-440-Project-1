@@ -3,8 +3,8 @@ import numpy as np
 
 
 # Generate states from files
-def generateStates():
-    txt_path = 'arrs/backTrackerMazes/01.txt'  # path maze data file
+def generateStates(mazeType: str):
+    txt_path = 'arrs/' + mazeType + '/00.txt'  # path maze data file
     f = open(txt_path)  # open file
     data_lists = f.readlines()  # read file data
     dataset = []

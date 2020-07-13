@@ -1,7 +1,7 @@
 import numpy as np
 from MinStateHeap import MinStateHeap
 import time
-import commonFunction
+import commonFunctions
 
 
 # A* algorithm
@@ -11,9 +11,9 @@ def ComputePath():
         minState = openHeap.pop()  # Remove a state s with the smallest f-value g(s) + h(s) from openHeap
         # print(openHeap.toString())
         closedHeap.push(minState)
-        actionList = commonFunction.generateActionList(minState, states, closedHeap)  # Generate action list for the state
+        actionList = commonFunctions.generateActionList(minState, states, closedHeap)  # Generate action list for the state
         for action in actionList:
-            searchedState = commonFunction.stateAfterMoving(minState, action, states)  # Get the state after taking a specific action
+            searchedState = commonFunctions.stateAfterMoving(minState, action, states)  # Get the state after taking a specific action
             if searchedState.searchValue < counter:
                 searchedState.gValue = 99999
                 searchedState.searchValue = counter
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     agentPath = []  # Path recorder
     timeStep = 0    # Time step counter
     print("Initializing states...", end="")
-    states = commonFunction.generateStates()  # initialize states
+    states = commonFunctions.generateStates()  # initialize states
     print("done!")
 
     # initialize start state and goal state randomly
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     startState = states[startLocation[0]][startLocation[1]]
     goalState = states[goalLocation[0]][goalLocation[1]]
 
-    commonFunction.checkNearbyBlock(startState, states)  # Check the status of nearby states
+    commonFunctions.checkNearbyBlock(startState, states)  # Check the status of nearby states
 
     agentPath.append(startLocation)  # Add the start location to the path
     print("Start location: %s" % startState.location)  # Print the start location
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     # Compute and set heuristic value for all states
     for stateList in states:
         for state in stateList:
-            state.hValue = commonFunction.heuristic(state, goalState)
+            state.hValue = commonFunctions.heuristic(state, goalState)
 
     print("Starting iteration...")
     startTime = time.time()     # Record start time
@@ -132,7 +132,7 @@ if __name__ == "__main__":
             if startState.treePointer.discoveredBlockStatus != 1:
                 startState = startState.treePointer
                 agentPath.append(startState.location)
-                commonFunction.checkNearbyBlock(startState, states)
+                commonFunctions.checkNearbyBlock(startState, states)
                 print("\tAgent Moves To: %s" % startState.location)
             else:
                 print("\tAgent Stops: Next state %s is blocked" % startState.treePointer.location)
@@ -142,7 +142,7 @@ if __name__ == "__main__":
         # Update heuristic value for all states
         for stateList in states:
             for state in stateList:
-                state.hValue = commonFunction.heuristic(state, startState)
+                state.hValue = commonFunctions.heuristic(state, startState)
     endTime = time.time()   # Record end time
     print("I reached the target!╰(*°▽°*)╯")
     print("Search Statistics:")

@@ -63,7 +63,7 @@ def repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst: b
         for state in stateList:
             state.hValue = commonFunctions.heuristic(state, goalState)
 
-    print("Iterating...")
+    print("Iterating...", end="")
     startTime = time.time()  # Record start time
     while goalState != startState:
         counter += 1
@@ -87,7 +87,7 @@ def repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst: b
 
         # if open heap is empty, report that can't reach the target
         if openHeap.size() == 0:
-            print("I cannot reach the target...o(╥﹏╥)o")
+            print("\033[1;31mI cannot reach the target...o(╥﹏╥)o\033[0m")
             return False
 
         # A star search finds the start state and move start location according to the tree pointer
@@ -122,7 +122,7 @@ def repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst: b
                 state.hValue = commonFunctions.heuristic(state, startState)
     expandedStates.append(goalState.location)
     endTime = time.time()  # Record end time
-    print("I reached the target!╰(*°▽°*)╯")
+    print("\033[1;32mI reached the target!╰(*°▽°*)╯\033[0m")
     print("Search Statistics:")
     print("\tStart Location: %s" % startLocation)
     print("\tGoal Location: %s" % goalLocation)

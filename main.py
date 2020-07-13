@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import shutil
-import time
+from gridWorldGenerator import generateGridWorld
 
 
 def visualizePath(mazeType: str, agentPath, AStarType):
@@ -56,10 +56,19 @@ if __name__ == '__main__':
     # mazeType = "backTrackerMazes"
     mazeType = "randGrid"
 
+    print("Checking grid world...", end="")
+    if not os.path.exists("arrs/%s/00.txt" % mazeType):
+        print("\033[1;33mDoes not detect grid world.\033[0m")
+        print("Generating grid world...", end="")
+        generateGridWorld(1)
+        print("\033[1;32mDone!\033[0m")
+    else:
+        print("\033[1;32mGrid world detected!\033[0m")
+
     # Initialize states from grid world
     print("Initializing states...", end="")
     states = commonFunctions.generateStates(mazeType)
-    print("done!")
+    print("\033[1;32mDone!\033[0m")
 
     # Initialize start location and goal location
     print("Generating start location and goal location...", end="")
@@ -67,9 +76,9 @@ if __name__ == '__main__':
     goalLocation = commonFunctions.generateUnblockedLocation(states)
     while (startLocation == goalLocation).all():
         goalLocation = commonFunctions.generateUnblockedLocation(states)
-    print("done!")
-    print("Start Location: %s" % startLocation)
-    print("Goal Location: %s" % goalLocation)
+    print("\033[1;32mDone!\033[0m")
+    print("Start Location: \033[1;32m%s\033[0m" % startLocation)
+    print("Goal Location: \033[1;32m%s\033[0m" % goalLocation)
     print("")
 
     # Decide the type of tie breaker
@@ -80,21 +89,25 @@ if __name__ == '__main__':
     agentPath = forwardAStar.repeatedForwardAStar(states, startLocation, goalLocation, isLargerGFirst)
     if agentPath is not False:
         visualizePath(mazeType, agentPath, "adaptiveAStar")
+    print("")
 
     states = commonFunctions.generateStates(mazeType)  # Reset the states
     print("Repeated Forward A Star Bigger G First: ")
     agentPath = forwardAStar.repeatedForwardAStar(states, startLocation, goalLocation, not isLargerGFirst)
     if agentPath is not False:
         visualizePath(mazeType, agentPath, "adaptiveAStar")
+    print("")
 
     states = commonFunctions.generateStates(mazeType)  # Reset the states
     print("Repeated Backward A Star: ")
     agentPath = backwardAStar.repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst)
     if agentPath is not False:
         visualizePath(mazeType, agentPath, "adaptiveAStar")
+    print("")
 
     states = commonFunctions.generateStates(mazeType)  # Reset the states
     print("Repeated Adaptive A Star: ")
     agentPath = adaptiveAStar.repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst)
     if agentPath is not False:
         visualizePath(mazeType, agentPath, "adaptiveAStar")
+    print("")

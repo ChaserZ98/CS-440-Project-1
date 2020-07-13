@@ -9,6 +9,7 @@ def ComputePath():
     while goalState.gValue > openHeap.peek().fValue:
         # print(openHeap.toString())
         minState = openHeap.pop()  # Remove a state s with the smallest f-value g(s) + h(s) from openHeap
+        expandedStates.append(minState.location)
         # print(openHeap.toString())
         closedHeap.push(minState)
         actionList = commonFunctions.generateActionList(minState, states, closedHeap)  # Generate action list for the state
@@ -43,8 +44,9 @@ if __name__ == "__main__":
     counter = 0  # A star counter
     agentPath = []  # Path recorder
     timeStep = 0  # Time step counter
+    expandedStates = []  # Expanded states during the whole repeated A star search
     print("Initializing states...", end="")
-    states = commonFunctions.generateStates()    # initialize states
+    states = commonFunctions.generateStates()  # initialize states
     print("done!")
 
     # initialize start state and goal state randomly
@@ -146,7 +148,7 @@ if __name__ == "__main__":
                 print("\tAgent Stops: Next state %s is blocked" % nextState.location)
                 break
             print("")
-    endTime = time.time()   # Record end time
+    endTime = time.time()  # Record end time
     print("I reached the target!╰(*°▽°*)╯")
     print("Search Statistics:")
     print("\tStart Location: %s" % startLocation)
@@ -157,8 +159,16 @@ if __name__ == "__main__":
             print(agentPath[0], end="")
             continue
         print("→%s" % agentPath[i], end="")
-    print("\t")
+    print("")
     print("\tTotal Time Step: %d" % timeStep)
     print("\tActual Cost: %d" % (len(agentPath) - 1))
     print("\tTime Cost: %.10f seconds" % (endTime - startTime))
+    print("\tExpanded Cells: ", end="")
+    for i in range(len(expandedStates)):
+        if i == 0:
+            print(expandedStates[0], end="")
+            continue
+        print(",%s" % expandedStates[i], end="")
+    print("")
+    print("\tNumber of Expanded Cells: %d" % len(expandedStates))
     exit()

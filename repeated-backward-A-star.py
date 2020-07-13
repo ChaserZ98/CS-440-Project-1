@@ -9,6 +9,7 @@ def ComputePath():
     while startState.gValue > openHeap.peek().fValue:
         # print(openHeap.toString())
         minState = openHeap.pop()  # Remove a state s with the smallest f-value g(s) + h(s) from openHeap
+        expandedStates.append(minState.location)
         # print(openHeap.toString())
         closedHeap.push(minState)
         actionList = commonFunctions.generateActionList(minState, states, closedHeap)  # Generate action list for the state
@@ -42,14 +43,15 @@ def ComputePath():
 if __name__ == "__main__":
     counter = 0  # A star counter
     agentPath = []  # Path recorder
-    timeStep = 0    # Time step counter
+    timeStep = 0  # Time step counter
+    expandedStates = []  # Expanded states during the whole repeated A star search
     print("Initializing states...", end="")
     states = commonFunctions.generateStates()  # initialize states
     print("done!")
 
     # initialize start state and goal state randomly
     print("Randomly setting start location and goal location...", end="")
-    statesEdgeSize = len(states)    # Size of states list
+    statesEdgeSize = len(states)  # Size of states list
     # print(statesEdgeSize)
 
     # Randomly set start location and goal location
@@ -143,7 +145,7 @@ if __name__ == "__main__":
         for stateList in states:
             for state in stateList:
                 state.hValue = commonFunctions.heuristic(state, startState)
-    endTime = time.time()   # Record end time
+    endTime = time.time()  # Record end time
     print("I reached the target!╰(*°▽°*)╯")
     print("Search Statistics:")
     print("\tStart Location: %s" % startLocation)
@@ -154,8 +156,16 @@ if __name__ == "__main__":
             print(agentPath[0], end="")
             continue
         print("→%s" % agentPath[i], end="")
-    print("\t")
+    print("")
     print("\tTotal Time Step: %d" % timeStep)
     print("\tActual Cost: %d" % (len(agentPath) - 1))
     print("\tTime Cost: %.10f seconds" % (endTime - startTime))
+    print("\tExpanded Cells: ", end="")
+    for i in range(len(expandedStates)):
+        if i == 0:
+            print(expandedStates[0], end="")
+            continue
+        print(",%s" % expandedStates[i], end="")
+    print("")
+    print("\tNumber of Expanded Cells: %d" % len(expandedStates))
     exit()

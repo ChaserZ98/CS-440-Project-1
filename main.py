@@ -29,17 +29,18 @@ def visualizePath(agentPath, AStarType):
 
     plt.ion()
     plt.figure()
+    img_artist = plt.imshow(data_set, cmap=plt.cm.binary, interpolation='nearest', extent=(0, 100, 0, 100))
     for index in range(len(agentPath)):
         if data_set[agentPath[index][0]][agentPath[index][1]] == 0:
             data_set[agentPath[index][0]][agentPath[index][1]] = 10
         else:
             data_set[agentPath[index][0]][agentPath[index][1]] += 1
 
-        plt.imshow(data_set, cmap=plt.cm.binary, interpolation='nearest')
+        img_artist.set_data(data_set)
         plt.xticks([]), plt.yticks([])
 
         plt.draw()
-        plt.pause(0.1)
+        plt.pause(0.001)
     plt.title("Finished!")
     plt.ioff()
     plt.show()

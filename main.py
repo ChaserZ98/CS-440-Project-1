@@ -9,7 +9,7 @@ import shutil
 import time
 
 
-def visualizePath(agentPath, AStarType):
+def visualizePath(mazeType: str, agentPath, AStarType):
     if not os.path.exists("pics/result"):
         os.mkdir("pics/result")
     if not os.path.exists("arrs/result"):
@@ -21,15 +21,18 @@ def visualizePath(agentPath, AStarType):
     os.mkdir("pics/result/" + AStarType)
     os.mkdir("arrs/result/" + AStarType)
 
-    data_set = np.loadtxt('arrs/backTrackerMazes/01.txt', dtype=np.int32)
+    data_set = np.loadtxt('arrs/%s/00.txt' % mazeType, dtype=np.int32)
     for row_index in range(len(data_set)):
         for column_index in range(len(data_set)):
             if data_set[row_index][column_index] == 1:
                 data_set[row_index][column_index] = 20
 
     plt.ion()
-    plt.figure()
-    img_artist = plt.imshow(data_set, cmap=plt.cm.binary, interpolation='nearest', extent=(0, 100, 0, 100))
+    plt.figure(figsize=(8, 8))
+    plt.title(AStarType, family="Comic Sans MS")
+    img_artist = plt.imshow(data_set, cmap=plt.cm.binary, vmin=0, vmax=20, interpolation='nearest', extent=(0, len(data_set), 0, len(data_set)))
+    plt.text(startLocation[1] + 0.1, len(data_set) - 0.9 - startLocation[0], 'S', fontdict={'size': 432/len(data_set), 'color': 'red'})
+    plt.text(goalLocation[1] + 0.1, len(data_set) - 0.9 - goalLocation[0], 'G', fontdict={'size': 432/len(data_set), 'color': 'red'})
     for index in range(len(agentPath)):
         if data_set[agentPath[index][0]][agentPath[index][1]] == 0:
             data_set[agentPath[index][0]][agentPath[index][1]] = 10
@@ -39,9 +42,9 @@ def visualizePath(agentPath, AStarType):
         img_artist.set_data(data_set)
         plt.xticks([]), plt.yticks([])
 
-        plt.draw()
-        plt.pause(0.001)
-    plt.title("Finished!")
+        # plt.draw()
+        plt.pause(0.01)
+    plt.text(42, -5, "Finished!", family="Comic Sans MS")
     plt.ioff()
     plt.show()
     # plt.savefig("pics/result/" + AStarType + "/step%d.png" % index)
@@ -50,9 +53,12 @@ def visualizePath(agentPath, AStarType):
 
 if __name__ == '__main__':
 
+    # mazeType = "backTrackerMazes"
+    mazeType = "randGrid"
+
     # Initialize states from grid world
     print("Initializing states...", end="")
-    states = commonFunctions.generateStates()
+    states = commonFunctions.generateStates(mazeType)
     print("done!")
 
     # Initialize start location and goal location
@@ -62,22 +68,33 @@ if __name__ == '__main__':
     while (startLocation == goalLocation).all():
         goalLocation = commonFunctions.generateUnblockedLocation(states)
     print("done!")
+    print("Start Location: %s" % startLocation)
+    print("Goal Location: %s" % goalLocation)
+    print("")
 
     # Decide the type of tie breaker
     isLargerGFirst = False
 
     # A Star Search
-    print("Repeated Forward A Star: ")
+    print("Repeated Forward A Star Smaller G First: ")
     agentPath = forwardAStar.repeatedForwardAStar(states, startLocation, goalLocation, isLargerGFirst)
-    visualizePath(agentPath, "forwardAStar")
-    # print(agentPath)
+    if agentPath is not False:
+        visualizePath(mazeType, agentPath, "adaptiveAStar")
 
-    states = commonFunctions.generateStates()  # Reset the states
+    states = commonFunctions.generateStates(mazeType)  # Reset the states
+    print("Repeated Forward A Star Bigger G First: ")
+    agentPath = forwardAStar.repeatedForwardAStar(states, startLocation, goalLocation, not isLargerGFirst)
+    if agentPath is not False:
+        visualizePath(mazeType, agentPath, "adaptiveAStar")
+
+    states = commonFunctions.generateStates(mazeType)  # Reset the states
     print("Repeated Backward A Star: ")
     agentPath = backwardAStar.repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst)
-    visualizePath(agentPath, "backwardAStar")
-    #
-    states = commonFunctions.generateStates()  # Reset the states
+    if agentPath is not False:
+        visualizePath(mazeType, agentPath, "adaptiveAStar")
+
+    states = commonFunctions.generateStates(mazeType)  # Reset the states
     print("Repeated Adaptive A Star: ")
     agentPath = adaptiveAStar.repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst)
-    visualizePath(agentPath, "adaptiveAStar")
+    if agentPath is not False:
+        visualizePath(mazeType, agentPath, "adaptiveAStar")

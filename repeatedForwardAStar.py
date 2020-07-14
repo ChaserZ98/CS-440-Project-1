@@ -103,12 +103,12 @@ def repeatedForwardAStar(states, startLocation, goalLocation, isLargerGFirst: bo
                 if nextState.treePointer == startState:
                     break
                 nextState = nextState.treePointer
-                # if nextState.discoveredBlockStatus == 1:
+                # if nextState.discoveredBlockStatus is True:
                 #     print("→%s(Blocked)" % nextState.location, end="")
                 # else:
                 #     print("→%s" % nextState.location, end="")
             # print("→%s(agent)" % startState.location)
-            if nextState.discoveredBlockStatus != 1:
+            if nextState.discoveredBlockStatus is False:
                 # print("\tAgent Moves To: %s" % nextState.location)
                 startState = nextState
                 agentPath.append(startState.location)
@@ -142,5 +142,5 @@ def repeatedForwardAStar(states, startLocation, goalLocation, isLargerGFirst: bo
     #     print(",%s" % expandedStates[i], end="")
     # print("")
     print("\tNumber of Expanded Cells: %d" % len(expandedStates))
-    print("")
+
     return agentPath

@@ -101,12 +101,12 @@ def repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst: b
             # Find the next state
             while (nextState.treePointer is not None) & (nextState != goalState):
                 nextState = nextState.treePointer
-                # if nextState.discoveredBlockStatus == 1:
+                # if nextState.discoveredBlockStatus is True:
                 #     print("→%s(Blocked)" % nextState.location, end="")
                 # else:
                 #     print("→%s" % nextState.location, end="")
             # print("→%s(goal)" % goalState.location)
-            if startState.treePointer.discoveredBlockStatus != 1:
+            if startState.treePointer.discoveredBlockStatus is False:
                 startState = startState.treePointer
                 agentPath.append(startState.location)
                 commonFunctions.checkNearbyBlock(startState, states)
@@ -145,5 +145,5 @@ def repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst: b
     #     print(",%s" % expandedStates[i], end="")
     # print("")
     print("\tNumber of Expanded Cells: %d" % len(expandedStates))
-    print("")
+
     return agentPath

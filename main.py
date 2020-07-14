@@ -9,6 +9,7 @@ import shutil
 from gridWorldGenerator import generateGridWorld
 
 
+# Visualize the path of the agent
 def visualizePath(mazeType: str, agentPath, AStarType):
     if not os.path.exists("pics/result"):
         os.mkdir("pics/result")
@@ -41,11 +42,38 @@ def visualizePath(mazeType: str, agentPath, AStarType):
             data_set[agentPath[index][0]][agentPath[index][1]] += 1
 
         img_artist.set_data(data_set)   # Update the figure
-        plt.xticks([]), plt.yticks([])
+        # plt.xticks([]), plt.yticks([])
 
         # plt.draw()
         plt.pause(0.01)     # Pause between each painting
-    plt.text(42, -5, "Finished!", family="Comic Sans MS")   # Notice that current drawing is finished
+
+    # Generate the optimal path
+    i = 0
+    while i < len(agentPath) - 1:
+        location = agentPath[i]
+        hasDuplicate = False
+        for j in range(i + 1, len(agentPath)):
+            if all(location == agentPath[j]):
+                hasDuplicate = True
+                del(agentPath[i + 1: j + 1])
+                break
+        if not hasDuplicate:
+            i += 1
+    # Erase all the path
+    for row_index in range(len(data_set)):
+        for column_index in range(len(data_set)):
+            # Reset the color of all the unblocked cells
+            if (data_set[row_index][column_index] > 0) & (data_set[row_index][column_index] < 20):
+                data_set[row_index][column_index] = 0
+
+    # Show the optimal path
+    for index in range(len(agentPath)):
+        data_set[agentPath[index][0]][agentPath[index][1]] = 10
+
+    img_artist.set_data(data_set)   # Update the figure
+
+    plt.text(3/8 * len(states), -4, "Finished!", family="Comic Sans MS", fontdict={'size': 12})   # Notice that current drawing is finished
+    plt.text(2/8 * len(states), -5, "Total steps in optimal path: %d" % len(agentPath), family="Comic Sans MS", fontdict={'size': 12})
     plt.ioff()  # Turn pyplot interactive mode off
     plt.show()
     # plt.savefig("pics/result/" + AStarType + "/step%d.png" % index)   # Save figure
@@ -54,14 +82,16 @@ def visualizePath(mazeType: str, agentPath, AStarType):
 
 if __name__ == '__main__':
 
-    # mazeType = "backTrackerMazes"
-    mazeType = "randGrid"
+    mazeType = "backTrackerMazes"
+    # mazeType = "randGrid"   # Selected Maze Type
+    mazeNum = 1     # Number of generated mazes
+    mazeSize = 50   # The height and width of maze
 
     print("Checking grid world...", end="")
     if not os.path.exists("arrs/%s/00.txt" % mazeType):
         print("\033[1;33mDoes not detect grid world.\033[0m")
         print("Generating grid world...", end="")
-        generateGridWorld(1)
+        generateGridWorld(mazeNum, mazeSize)
         print("\033[1;32mDone!\033[0m")
     else:
         print("\033[1;32mGrid world detected!\033[0m")
@@ -75,6 +105,7 @@ if __name__ == '__main__':
     print("Generating start location and goal location...", end="")
     startLocation = commonFunctions.generateUnblockedLocation(states)
     goalLocation = commonFunctions.generateUnblockedLocation(states)
+
     while (startLocation == goalLocation).all():
         goalLocation = commonFunctions.generateUnblockedLocation(states)
     print("\033[1;32mDone!\033[0m")
@@ -90,6 +121,7 @@ if __name__ == '__main__':
     agentPath = forwardAStar.repeatedForwardAStar(states, startLocation, goalLocation, isLargerGFirst)
     if agentPath is not False:
         visualizePath(mazeType, agentPath, "Forward A Star Smaller G First")
+        print("\tCosts for optimal path: %d" % len(agentPath))
     print("")
 
     states = commonFunctions.generateStates(mazeType)  # Reset the states
@@ -97,6 +129,7 @@ if __name__ == '__main__':
     agentPath = forwardAStar.repeatedForwardAStar(states, startLocation, goalLocation, not isLargerGFirst)
     if agentPath is not False:
         visualizePath(mazeType, agentPath, "Forward A Star Larger G First")
+        print("\tCosts for optimal path: %d" % len(agentPath))
     print("")
 
     states = commonFunctions.generateStates(mazeType)  # Reset the states
@@ -104,6 +137,7 @@ if __name__ == '__main__':
     agentPath = backwardAStar.repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst)
     if agentPath is not False:
         visualizePath(mazeType, agentPath, "Backward A Star")
+        print("\tCosts for optimal path: %d" % len(agentPath))
     print("")
 
     states = commonFunctions.generateStates(mazeType)  # Reset the states
@@ -111,4 +145,5 @@ if __name__ == '__main__':
     agentPath = adaptiveAStar.repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst)
     if agentPath is not False:
         visualizePath(mazeType, agentPath, "Adaptive A Star")
+        print("\tCosts for optimal path: %d" % len(agentPath))
     print("")

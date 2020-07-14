@@ -10,7 +10,10 @@ import IPython
 
 
 # use backTrackerMaze as the maze generator
-def backTrackerMaze(number, width=101, height=101):
+def backTrackerMaze(args):
+    number = args[0]
+    width = args[1]
+    height = args[2]
     shape = (height, width)
     # Build actual maze
     Z = np.ones(shape, dtype=bool)  # Maze-grid: 1's are black, 0's are white
@@ -90,7 +93,10 @@ def backTrackerMaze(number, width=101, height=101):
     np.savetxt("arrs/backTrackerMazes/{0:0=2d}.txt".format(number), Z, fmt='%d')
 
 
-def randGridMaze(number, width=101, height=101):
+def randGridMaze(args):
+    number = args[0]
+    width = args[1]
+    height = args[2]
     shape = (height, width)
     Z = np.random.choice([0, 1], size=shape, p=[.70, .30])
     plt.figure()
@@ -101,7 +107,7 @@ def randGridMaze(number, width=101, height=101):
     np.savetxt("arrs/randGrid/{0:0=2d}.txt".format(number), Z, fmt='%d')
 
 
-def generateGridWorld(number: int):
+def generateGridWorld(number: int, mazeSize: int):
     if os.path.exists("arrs"):
         shutil.rmtree("arrs")
     if os.path.exists("pics"):
@@ -123,7 +129,7 @@ def generateGridWorld(number: int):
     # num_proc = os.cpu_count()
     pool = multiprocessing.Pool(processes=num_proc)
 
-    nn = [i for i in range(n_grids)]
+    nn = [(i, mazeSize, mazeSize) for i in range(n_grids)]
     pool.map(randGridMaze, nn)
 
     nn = [i for i in nn]

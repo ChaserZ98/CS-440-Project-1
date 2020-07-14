@@ -94,10 +94,6 @@ def repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst: b
         while not closedHeap.isEmpty():
             tempState = closedHeap.pop()
             tempState.hValue = goalState.gValue - tempState.gValue
-        # for stateList in states:
-        #     for state in stateList:
-        #         if state.searchValue == counter:
-        #             state.hValue = goalState.gValue - state.gValue
 
         # A star search finds the start state and move start location according to the tree pointer
         # Track the tree pointers from goal state to start state

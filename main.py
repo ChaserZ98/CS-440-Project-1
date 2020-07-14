@@ -25,30 +25,31 @@ def visualizePath(mazeType: str, agentPath, AStarType):
     for row_index in range(len(data_set)):
         for column_index in range(len(data_set)):
             if data_set[row_index][column_index] == 1:
-                data_set[row_index][column_index] = 20
+                data_set[row_index][column_index] = 20  # Set the blocked cell to the darkest color
 
-    plt.ion()
-    plt.figure(figsize=(8, 8))
-    plt.title(AStarType, family="Comic Sans MS")
-    img_artist = plt.imshow(data_set, cmap=plt.cm.binary, vmin=0, vmax=20, interpolation='nearest', extent=(0, len(data_set), 0, len(data_set)))
-    plt.text(startLocation[1] + 0.1, len(data_set) - 0.9 - startLocation[0], 'S', fontdict={'size': 432/len(data_set), 'color': 'red'})
-    plt.text(goalLocation[1] + 0.1, len(data_set) - 0.9 - goalLocation[0], 'G', fontdict={'size': 432/len(data_set), 'color': 'red'})
+    plt.ion()   # Turn pyplot interactive mode on
+    plt.figure(figsize=(8, 8))  # Initialize figure
+    plt.title(AStarType, family="Comic Sans MS")    # Set title of the figure
+    img_artist = plt.imshow(data_set, cmap=plt.cm.binary, vmin=0, vmax=20, interpolation='nearest', extent=(0, len(data_set), 0, len(data_set)))    # Initialize drawer
+    plt.text(startLocation[1] + 0.1, len(data_set) - 0.9 - startLocation[0], 'S', fontdict={'size': 432/len(data_set), 'color': 'red'})     # Label start location
+    plt.text(goalLocation[1] + 0.1, len(data_set) - 0.9 - goalLocation[0], 'G', fontdict={'size': 432/len(data_set), 'color': 'red'})       # Label goal location
     for index in range(len(agentPath)):
         if data_set[agentPath[index][0]][agentPath[index][1]] == 0:
             data_set[agentPath[index][0]][agentPath[index][1]] = 10
         else:
+            # Deepen the color of the cells that have been passed
             data_set[agentPath[index][0]][agentPath[index][1]] += 1
 
-        img_artist.set_data(data_set)
+        img_artist.set_data(data_set)   # Update the figure
         plt.xticks([]), plt.yticks([])
 
         # plt.draw()
-        plt.pause(0.01)
-    plt.text(42, -5, "Finished!", family="Comic Sans MS")
-    plt.ioff()
+        plt.pause(0.01)     # Pause between each painting
+    plt.text(42, -5, "Finished!", family="Comic Sans MS")   # Notice that current drawing is finished
+    plt.ioff()  # Turn pyplot interactive mode off
     plt.show()
-    # plt.savefig("pics/result/" + AStarType + "/step%d.png" % index)
-    # np.savetxt("arrs/result/" + AStarType + "/step%d.txt" % index, data_set, fmt='%d')
+    # plt.savefig("pics/result/" + AStarType + "/step%d.png" % index)   # Save figure
+    # np.savetxt("arrs/result/" + AStarType + "/step%d.txt" % index, data_set, fmt='%d')    # Save path as txt
 
 
 if __name__ == '__main__':

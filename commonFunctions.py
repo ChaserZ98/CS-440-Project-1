@@ -15,7 +15,7 @@ def generateStates(mazeType: str):
         data2 = data1.split(' ')
         dataset.append(data2)
     # convert list to states list and return
-    return [[State(x, y, int(dataset[x][y])) for y in range(len(dataset[0]))] for x in range(len(dataset))]
+    return [[State(x, y, True if int(dataset[x][y]) == 1 else False) for y in range(len(dataset[0]))] for x in range(len(dataset))]
 
 
 # heuristic function (Manhattan distance)
@@ -34,25 +34,25 @@ def generateActionList(state: State, states, closedHeap):
     #   Check possible actions
     #   Check down
     if row + 1 <= len(states) - 1:
-        if (states[row + 1][column].discoveredBlockStatus == 0) & (not closedHeap.contains(states[row + 1][column])):
+        if (states[row + 1][column].discoveredBlockStatus is False) & (not closedHeap.contains(states[row + 1][column])):
             possibleActions.append(1)
         # else:
         # print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (x + 1, y, x + 1, y, states[x + 1][y].isBlocked))
     #   Check up
     if row - 1 >= 0:
-        if (states[row - 1][column].discoveredBlockStatus == 0) & (not closedHeap.contains(states[row - 1][column])):
+        if (states[row - 1][column].discoveredBlockStatus is False) & (not closedHeap.contains(states[row - 1][column])):
             possibleActions.append(2)
         # else:
         # print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (x - 1, y, x - 1, y, states[x - 1][y].isBlocked))
     #   Check right
     if column + 1 <= len(states) - 1:
-        if (states[row][column + 1].discoveredBlockStatus == 0) & (not closedHeap.contains(states[row][column + 1])):
+        if (states[row][column + 1].discoveredBlockStatus is False) & (not closedHeap.contains(states[row][column + 1])):
             possibleActions.append(3)
         # else:
         # print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (x, y + 1, x, y + 1, states[x][y + 1].isBlocked))
     #   Check left
     if column - 1 >= 0:
-        if (states[row][column - 1].discoveredBlockStatus == 0) & (not closedHeap.contains(states[row][column - 1])):
+        if (states[row][column - 1].discoveredBlockStatus is False) & (not closedHeap.contains(states[row][column - 1])):
             possibleActions.append(4)
         # else:
         # print("\tState [%d %d] is blocked: states[%d][%d].isBlocked = %d" % (x, y - 1, x, y - 1, states[x][y - 1].isBlocked))
@@ -103,6 +103,6 @@ def checkNearbyBlock(s: State, states):
 def generateUnblockedLocation(states):
     statesEdgeSize = len(states)
     location = np.random.randint(0, statesEdgeSize, 2)
-    while states[location[0]][location[1]].actualBlockStatus == 1:
+    while states[location[0]][location[1]].actualBlockStatus is True:
         location = np.random.randint(0, statesEdgeSize, 2)
     return location

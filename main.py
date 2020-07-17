@@ -72,8 +72,8 @@ def visualizePath(mazeType: str, agentPath, AStarType):
 
     img_artist.set_data(data_set)   # Update the figure
 
-    plt.text(3/8 * len(states), -4, "Finished!", family="Comic Sans MS", fontdict={'size': 12})   # Notice that current drawing is finished
-    plt.text(2/8 * len(states), -5, "Total steps in optimal path: %d" % len(agentPath), family="Comic Sans MS", fontdict={'size': 12})
+    plt.text(3/8 * len(states), -len(states)/15, "Finished!", family="Comic Sans MS", fontdict={'size': 12})   # Notice that current drawing is finished
+    plt.text(2/8 * len(states), -len(states)/10, "Total steps in optimal path: %d" % (len(agentPath) - 1), family="Comic Sans MS", fontdict={'size': 12})
     plt.ioff()  # Turn pyplot interactive mode off
     plt.show()
     # plt.savefig("pics/result/" + AStarType + "/step%d.png" % index)   # Save figure
@@ -82,10 +82,10 @@ def visualizePath(mazeType: str, agentPath, AStarType):
 
 if __name__ == '__main__':
 
-    mazeType = "backTrackerMazes"
-    # mazeType = "randGrid"   # Selected Maze Type
+    # mazeType = "backTrackerMazes"
+    mazeType = "randGrid"   # Selected Maze Type
     mazeNum = 1     # Number of generated mazes
-    mazeSize = 50   # The height and width of maze
+    mazeSize = 101   # The height and width of maze
 
     print("Checking grid world...", end="")
     if not os.path.exists("arrs/%s/00.txt" % mazeType):
@@ -95,6 +95,19 @@ if __name__ == '__main__':
         print("\033[1;32mDone!\033[0m")
     else:
         print("\033[1;32mGrid world detected!\033[0m")
+        # Checking whether the existing maze satisfies the size requirement
+        dataset = np.loadtxt('arrs/%s/00.txt' % mazeType, dtype=np.int32)
+        print("Checking existing grid world...", end="")
+        if len(dataset) != mazeSize:
+            print("\033[1;33mError!\033[0m")
+            print("\tError Type: \033[1;33mMaze Size Unmatched\033[0m")
+            print("\tExpected maze size: \033[1;33m%d\033[0m" % mazeSize)
+            print("\tExisting maze size: \033[1;33m%d\033[0m" % len(dataset))
+            print("Regenerating the maze with correct size...", end="")
+            generateGridWorld(mazeNum, mazeSize)
+            print("\033[1;32mDone!\033[0m")
+        else:
+            print("\033[1;32mClear!\033[0m")
 
     # Initialize states from grid world
     print("Initializing states...", end="")
@@ -121,7 +134,7 @@ if __name__ == '__main__':
     agentPath = forwardAStar.repeatedForwardAStar(states, startLocation, goalLocation, isLargerGFirst)
     if agentPath is not False:
         visualizePath(mazeType, agentPath, "Forward A Star Smaller G First")
-        print("\tCosts for optimal path: %d" % len(agentPath))
+        print("\tCosts for optimal path: %d" % (len(agentPath) - 1))
     print("")
 
     states = commonFunctions.generateStates(mazeType)  # Reset the states
@@ -129,7 +142,7 @@ if __name__ == '__main__':
     agentPath = forwardAStar.repeatedForwardAStar(states, startLocation, goalLocation, not isLargerGFirst)
     if agentPath is not False:
         visualizePath(mazeType, agentPath, "Forward A Star Larger G First")
-        print("\tCosts for optimal path: %d" % len(agentPath))
+        print("\tCosts for optimal path: %d" % (len(agentPath) - 1))
     print("")
 
     states = commonFunctions.generateStates(mazeType)  # Reset the states
@@ -137,7 +150,7 @@ if __name__ == '__main__':
     agentPath = backwardAStar.repeatedBackwardAStar(states, startLocation, goalLocation, isLargerGFirst)
     if agentPath is not False:
         visualizePath(mazeType, agentPath, "Backward A Star")
-        print("\tCosts for optimal path: %d" % len(agentPath))
+        print("\tCosts for optimal path: %d" % (len(agentPath) - 1))
     print("")
 
     states = commonFunctions.generateStates(mazeType)  # Reset the states
@@ -145,5 +158,5 @@ if __name__ == '__main__':
     agentPath = adaptiveAStar.repeatedAdaptiveAStar(states, startLocation, goalLocation, isLargerGFirst)
     if agentPath is not False:
         visualizePath(mazeType, agentPath, "Adaptive A Star")
-        print("\tCosts for optimal path: %d" % len(agentPath))
+        print("\tCosts for optimal path: %d" % (len(agentPath) - 1))
     print("")

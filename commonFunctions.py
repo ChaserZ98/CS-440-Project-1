@@ -1,19 +1,11 @@
 from State import State
 import numpy as np
+from gridWorldGenerator import generateGridWorld
 
 
 # Generate states from files
 def generateStates(mazeType: str):
-    txt_path = 'arrs/' + mazeType + '/00.txt'  # path maze data file
-    f = open(txt_path)  # open file
-    data_lists = f.readlines()  # read file data
-    dataset = []
-
-    # convert data in file to list
-    for data in data_lists:
-        data1 = data.strip('\n')
-        data2 = data1.split(' ')
-        dataset.append(data2)
+    dataset = np.loadtxt('arrs/%s/00.txt' % mazeType, dtype=np.int32)
     # convert list to states list and return
     return [[State(x, y, True if int(dataset[x][y]) == 1 else False) for y in range(len(dataset[0]))] for x in range(len(dataset))]
 
